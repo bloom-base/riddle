@@ -87,7 +87,7 @@ export function validateMatches(
   });
   
   // Check each user match
-  let allCorrect = true;
+  let allCorrect = userMatches.length === puzzle.correctMatches.length;
   userMatches.forEach((userMatch) => {
     const expectedClosingId = correctMatchMap.get(userMatch.openingId);
     const isCorrect = expectedClosingId === userMatch.closingId;
