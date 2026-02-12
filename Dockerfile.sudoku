@@ -1,0 +1,56 @@
+# Multi-stage Dockerfile for Sudoku Demo Application
+# Builds both frontend and backend, optimized for production
+
+# === Stage 1: Builder ===
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+
+# Copy package files
+COPY package.json package-lock.json ./
+COPY backend/package.json ./backend/
+COPY frontend/package.json ./frontend/
+
+# Install dependencies
+RUN npm install
+
+# Copy source code
+COPY backend ./backend
+COPY frontend ./frontend
+
+# Build backend (TypeScript compilation)
+RUN npm run build:backend
+
+# Build frontend (Vite build with Sudoku entry point)
+RUN npm run build:frontend
+
+# === Stage 2: Runtime ===
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Install only production dependencies
+COPY package.json package-lock.json ./
+COPY backend/package.json ./backend/
+RUN npm ci --only=production && \
+    npm cache clean --force
+
+# Copy built backend from builder
+COPY --from=builder /app/backend/dist ./backend/dist
+
+# Copy built frontend from builder
+COPY --from=builder /app/frontend/dist ./frontend/dist
+
+# Set environment variables
+ENV NODE_ENV=production
+ENV PORT=3001
+
+# Health check
+HEALTHCHECK --interval=10s --timeout=5s --start-period=5s --retries=3 \
+  CMD node -e "require('http').get('http://localhost:3001/api/health', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})"
+
+# Expose ports
+EXPOSE 3000 3001
+
+# Start the application
+CMD ["node", "backend/dist/index.js"]

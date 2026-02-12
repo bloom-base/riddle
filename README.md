@@ -4,12 +4,15 @@
 
 ---
 
-## Current Puzzle: Quote Fragment Matching
+## Puzzle Types
+
+### 1. Quote Fragment Matching (Main Platform)
 
 Match opening and closing fragments from famous U.S. literature quotes to complete the lines. One beautiful puzzle per day!
 
-### Features
+**Live at**: https://riddle-game.fly.dev
 
+**Features**:
 - **Daily Puzzle Rotation**: Same puzzle for all users on a given day
 - **Beautiful UI**: Clean, high-contrast design for optimal readability
 - **Responsive Design**: Works seamlessly on desktop, tablet, and mobile
@@ -20,6 +23,23 @@ Match opening and closing fragments from famous U.S. literature quotes to comple
 - **Twitch Integration**: Live leaderboards, OBS overlays, and community engagement
 - **Countdown Timer**: Shows time until next daily puzzle reset
 - **Global Leaderboard**: Compete with other players, track fastest solvers
+
+### 2. Sudoku Demo (Separate App) 🎲
+
+Solve a daily 3×3 Sudoku puzzle. A focused, standalone game experience.
+
+**Live at**: https://sudoku-demo.fly.dev (separate deployment)
+
+**Features**:
+- **Daily Puzzle**: New 3×3 Sudoku puzzle every day
+- **Deterministic Generation**: Same puzzle for all users on the same day
+- **Beautiful Grid UI**: Clean, accessible Sudoku grid interface
+- **Real-time Validation**: Instant feedback on correct/incorrect entries
+- **Hint System**: Fill random empty cells with correct numbers
+- **Leaderboard**: Compete with other players, track fastest solvers
+- **Countdown Timer**: Shows time until next daily puzzle reset
+- **Responsive Design**: Works on desktop, tablet, and mobile
+- **Completely Independent**: Runs on separate Fly.io infrastructure
 
 ## Tech Stack
 
@@ -32,34 +52,53 @@ Match opening and closing fragments from famous U.S. literature quotes to comple
 
 ```
 riddle/
-├── frontend/              # React frontend application
+├── frontend/                      # React frontend (both apps)
 │   ├── src/
 │   │   ├── components/
 │   │   │   ├── QuoteMatchingPuzzle.tsx
-│   │   │   └── QuoteMatchingPuzzle.css
-│   │   ├── App.tsx
+│   │   │   ├── QuoteMatchingPuzzle.css
+│   │   │   ├── SudokuPuzzle.tsx           # NEW: Sudoku component
+│   │   │   ├── SudokuPuzzle.css           # NEW: Sudoku styling
+│   │   │   ├── CountdownTimer.tsx
+│   │   │   ├── Leaderboard.tsx
+│   │   │   └── OBSOverlay.tsx
+│   │   ├── App.tsx                        # Quote matching app
+│   │   ├── SudokuApp.tsx                  # NEW: Sudoku app
+│   │   ├── main.tsx                       # Quote app entry
+│   │   ├── sudoku.tsx                     # NEW: Sudoku entry
 │   │   ├── App.css
-│   │   ├── main.tsx
 │   │   ├── index.css
 │   │   └── App.test.tsx
-│   ├── index.html
+│   ├── index.html                         # Quote app HTML
+│   ├── sudoku.html                        # NEW: Sudoku HTML
 │   ├── package.json
-│   ├── vite.config.ts
+│   ├── vite.config.ts                     # Multi-entry config
 │   └── tsconfig.json
-├── backend/               # Express API server
+├── backend/                       # Express API server (both apps)
 │   ├── src/
 │   │   ├── index.ts
 │   │   ├── services/
 │   │   │   ├── puzzleService.ts
-│   │   │   └── puzzleService.test.ts
+│   │   │   ├── puzzleService.test.ts
+│   │   │   ├── sudokuService.ts           # NEW: Sudoku logic
+│   │   │   ├── sudokuService.test.ts      # NEW: Sudoku tests
+│   │   │   ├── leaderboardService.ts      # Shared leaderboard
+│   │   │   └── leaderboardService.test.ts
 │   │   └── data/
 │   │       └── quotes.ts
 │   ├── package.json
 │   ├── tsconfig.json
 │   ├── .env.example
 │   └── vitest.config.ts
-├── package.json           # Root workspace config
-└── README.md
+├── Dockerfile                     # Main app Docker build
+├── Dockerfile.sudoku              # NEW: Sudoku Docker build
+├── fly.toml                        # Main app deployment
+├── fly.sudoku.toml                # NEW: Sudoku deployment
+├── package.json                   # Root workspace config
+├── README.md                       # This file
+├── DEPLOYMENT_GUIDE.md            # Main app deployment guide
+├── SUDOKU_DEPLOYMENT.md           # NEW: Sudoku deployment guide
+└── ...other files
 ```
 
 ## API Endpoints
@@ -214,20 +253,36 @@ npm run test:run
 
 ## Deployment
 
-### Quick Deploy to Fly.io
+### Quick Deploy - Quote Matching (Main App)
 
-Deploy the Riddle game to the cloud with a single command:
+Deploy the main Riddle game (quote matching) to Fly.io:
 
 ```bash
 flyctl auth login
-flyctl deploy
+flyctl deploy --config fly.toml --app riddle-game
 ```
 
 Your app will be live at `https://riddle-game.fly.dev`
 
-### Full Deployment Guide
+### Quick Deploy - Sudoku Demo (Separate App)
 
-For detailed deployment instructions, environment configuration, scaling, and troubleshooting, see [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md).
+Deploy the Sudoku demo to a **separate URL**:
+
+```bash
+flyctl auth login
+flyctl deploy --config fly.sudoku.toml --app sudoku-demo
+```
+
+Your Sudoku app will be live at `https://sudoku-demo.fly.dev`
+
+This creates a **completely independent Sudoku game** that runs on its own infrastructure, separate from the main Riddle platform.
+
+### Full Deployment Guides
+
+- **Quote Matching**: See [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) for main app details
+- **Sudoku Demo**: See [SUDOKU_DEPLOYMENT.md](./SUDOKU_DEPLOYMENT.md) for Sudoku-specific deployment
+
+For detailed instructions on configuration, scaling, monitoring, and troubleshooting for both apps.
 
 ### Docker
 
