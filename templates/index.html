@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sudoku - Riddle</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🧩 Sudoku</h1>
+            <p class="tagline">One puzzle a day keeps the brain sharp</p>
+        </header>
+
+        <main>
+            <div class="game-wrapper">
+                <!-- Game board -->
+                <div class="game-section">
+                    <div id="board" class="sudoku-board"></div>
+                    
+                    <!-- Number pad -->
+                    <div class="number-pad">
+                        <div class="number-pad-title">Numbers</div>
+                        <div class="number-buttons">
+                            <button class="number-btn" data-num="1">1</button>
+                            <button class="number-btn" data-num="2">2</button>
+                            <button class="number-btn" data-num="3">3</button>
+                            <button class="number-btn" data-num="4">4</button>
+                            <button class="number-btn" data-num="5">5</button>
+                            <button class="number-btn" data-num="6">6</button>
+                            <button class="number-btn" data-num="7">7</button>
+                            <button class="number-btn" data-num="8">8</button>
+                            <button class="number-btn" data-num="9">9</button>
+                            <button class="number-btn clear-btn" data-num="0">Clear</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sidebar controls -->
+                <aside class="controls">
+                    <div class="control-group">
+                        <h3>Game Status</h3>
+                        <div id="status" class="status-display">
+                            <p id="status-text">Loading...</p>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <h3>Actions</h3>
+                        <button id="new-puzzle-btn" class="btn btn-primary">New Puzzle</button>
+                        <button id="hint-btn" class="btn btn-secondary">💡 Hint</button>
+                        <button id="check-btn" class="btn btn-secondary">✓ Check</button>
+                        <button id="solve-btn" class="btn btn-secondary">Solve</button>
+                    </div>
+
+                    <div class="control-group">
+                        <h3>Difficulty</h3>
+                        <div class="difficulty-selector">
+                            <label>
+                                <input type="radio" name="difficulty" value="30"> Easy
+                            </label>
+                            <label>
+                                <input type="radio" name="difficulty" value="40" checked> Medium
+                            </label>
+                            <label>
+                                <input type="radio" name="difficulty" value="50"> Hard
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <h3>Time</h3>
+                        <div id="timer" class="timer">00:00</div>
+                    </div>
+
+                    <div class="control-group info">
+                        <p>💡 Click cells to select them, then click a number or use keyboard to enter.</p>
+                        <p>Press 0 or Delete to clear a cell.</p>
+                    </div>
+                </aside>
+            </div>
+        </main>
+
+        <!-- Modals -->
+        <div id="completion-modal" class="modal">
+            <div class="modal-content">
+                <h2>🎉 Puzzle Solved!</h2>
+                <p id="completion-message"></p>
+                <div class="modal-buttons">
+                    <button id="modal-new-btn" class="btn btn-primary">New Puzzle</button>
+                    <button id="modal-close-btn" class="btn btn-secondary">Close</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="error-modal" class="modal">
+            <div class="modal-content modal-error">
+                <h2>⚠️ Error</h2>
+                <p id="error-message"></p>
+                <div class="modal-buttons">
+                    <button id="error-close-btn" class="btn btn-secondary">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/game.js') }}"></script>
+</body>
+</html>

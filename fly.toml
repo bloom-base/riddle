@@ -1,0 +1,27 @@
+# Fly.io configuration for Sudoku Puzzle Game
+app = "riddle-sudoku"
+primary_region = "ord"
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  FLASK_ENV = "production"
+  PYTHONUNBUFFERED = "true"
+
+[http_service]
+  internal_port = 5000
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 1
+
+  [http_service.concurrency]
+    type = "requests"
+    hard_limit = 1000
+    soft_limit = 800
+
+[[vm]]
+  cpus = 1
+  cpu_kind = "shared"
+  memory_mb = 512
