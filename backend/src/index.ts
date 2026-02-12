@@ -14,6 +14,12 @@ import {
   hasCompletedToday,
   getUserBestTime
 } from './services/leaderboardService.js';
+import {
+  generateDailySudoku,
+  validateSudoku,
+  getPuzzleInfo,
+  type SudokuGrid
+} from './services/sudokuService.js';
 
 dotenv.config();
 
@@ -196,6 +202,125 @@ app.get('/api/leaderboard/:date/user/:username', (req: Request, res: Response) =
 });
 
 /**
+ * GET /api/sudoku/puzzle/:date?
+ * Get today's Sudoku puzzle or puzzle for a specific date
+ * Date format: YYYY-MM-DD (optional, defaults to today)
+ */
+app.get('/api/sudoku/puzzle/:date?', (req: Request, res: Response) => {
+  try {
+    const date = req.params.date || new Date().toISOString().split('T')[0];
+    const puzzle = getPuzzleInfo(date);
+    res.json(puzzle);
+  } catch (error) {
+    console.error('Error generating Sudoku puzzle:', error);
+    res.status(500).json({ error: 'Failed to generate Sudoku puzzle' });
+  }
+});
+
+/**
+ * GET /api/sudoku/solution/:date?
+ * Get the solution for a Sudoku puzzle (for client-side validation)
+ * Date format: YYYY-MM-DD (optional, defaults to today)
+ */
+app.get('/api/sudoku/solution/:date?', (req: Request, res: Response) => {
+  try {
+    const date = req.params.date || new Date().toISOString().split('T')[0];
+    const puzzle = generateDailySudoku(date);
+    res.json({
+      date: puzzle.date,
+      solution: puzzle.solution
+    });
+  } catch (error) {
+    console.error('Error fetching Sudoku solution:', error);
+    res.status(500).json({ error: 'Failed to fetch solution' });
+  }
+});
+
+/**
+ * POST /api/sudoku/validate
+ * Validate user's Sudoku solution
+ * Body: { date: string, grid: SudokuGrid }
+ */
+app.post('/api/sudoku/validate', (req: Request, res: Response) => {
+  try {
+    const { date, grid } = req.body;
+
+    if (!date || !grid || !Array.isArray(grid)) {
+      return res.status(400).json({ error: 'Invalid request body' });
+    }
+
+    if (grid.length !== 3 || grid.some((row: any) => !Array.isArray(row) || row.length !== 3)) {
+      return res.status(400).json({ error: 'Grid must be 3x3' });
+    }
+
+    const puzzle = generateDailySudoku(date);
+    const result = validateSudoku(grid as SudokuGrid, puzzle.solution);
+
+    res.json(result);
+  } catch (error) {
+    console.error('Error validating Sudoku:', error);
+    res.status(500).json({ error: 'Failed to validate Sudoku' });
+  }
+});
+
+/**
+ * POST /api/sudoku/leaderboard/submit
+ * Submit a Sudoku completion time to the leaderboard
+ * Body: { date: string, username: string, completionTime: number }
+ */
+app.post('/api/sudoku/leaderboard/submit', (req: Request, res: Response) => {
+  try {
+    const { date, username, completionTime } = req.body;
+
+    if (!date || !username || completionTime === undefined) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    if (typeof completionTime !== 'number' || completionTime < 0) {
+      return res.status(400).json({ error: 'Invalid completion time' });
+    }
+
+    const entry = submitCompletion(date, username, completionTime);
+    res.json({
+      success: true,
+      entry,
+      stats: getDailyStats(date)
+    });
+  } catch (error) {
+    console.error('Error submitting Sudoku to leaderboard:', error);
+    res.status(500).json({ error: 'Failed to submit leaderboard entry' });
+  }
+});
+
+/**
+ * GET /api/sudoku/leaderboard/:date
+ * Get Sudoku leaderboard for a specific date
+ * Optional query param: limit (default: 20)
+ */
+app.get('/api/sudoku/leaderboard/:date', (req: Request, res: Response) => {
+  try {
+    const { date } = req.params;
+    const limit = req.query.limit ? parseInt(req.query.limit as string) : 20;
+
+    if (limit < 1 || limit > 100) {
+      return res.status(400).json({ error: 'Limit must be between 1 and 100' });
+    }
+
+    const leaderboard = getLeaderboard(date, limit);
+    const stats = getDailyStats(date);
+
+    res.json({
+      date,
+      leaderboard,
+      stats
+    });
+  } catch (error) {
+    console.error('Error fetching Sudoku leaderboard:', error);
+    res.status(500).json({ error: 'Failed to fetch leaderboard' });
+  }
+});
+
+/**
  * 404 handler
  */
 app.use((req: Request, res: Response) => {
@@ -206,12 +331,21 @@ app.use((req: Request, res: Response) => {
 app.listen(PORT, () => {
   console.log(`🎭 Riddle backend server running on http://localhost:${PORT}`);
   console.log(`📚 API Documentation:`);
+  console.log(`   Quote Matching Puzzle:`);
   console.log(`   GET  /api/puzzle/:date              - Get puzzle for date (default: today)`);
   console.log(`   POST /api/validate                  - Validate match attempts`);
   console.log(`   POST /api/leaderboard/submit        - Submit completion time`);
   console.log(`   GET  /api/leaderboard/:date         - Get leaderboard for date`);
   console.log(`   GET  /api/stats/:date               - Get daily statistics`);
   console.log(`   GET  /api/leaderboard/:date/user/:username - Check user completion`);
+  console.log(`   `);
+  console.log(`   Sudoku Puzzle:`);
+  console.log(`   GET  /api/sudoku/puzzle/:date       - Get Sudoku puzzle for date`);
+  console.log(`   GET  /api/sudoku/solution/:date     - Get Sudoku solution for date`);
+  console.log(`   POST /api/sudoku/validate           - Validate Sudoku solution`);
+  console.log(`   POST /api/sudoku/leaderboard/submit - Submit Sudoku completion time`);
+  console.log(`   GET  /api/sudoku/leaderboard/:date  - Get Sudoku leaderboard for date`);
+  console.log(`   `);
   console.log(`   GET  /api/health                    - Health check`);
 });
 

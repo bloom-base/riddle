@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import { resolve } from 'path'
 
 export default defineConfig({
   plugins: [react()],
@@ -14,6 +15,17 @@ export default defineConfig({
   },
   build: {
     outDir: 'dist',
-    sourcemap: true
+    sourcemap: true,
+    rollupOptions: {
+      input: {
+        main: resolve(__dirname, 'index.html'),
+        sudoku: resolve(__dirname, 'sudoku.html'),
+      },
+      output: {
+        entryFileNames: '[name].js',
+        chunkFileNames: 'chunks/[name].[hash].js',
+        assetFileNames: 'assets/[name].[hash][extname]',
+      }
+    }
   }
 })
