@@ -134,6 +134,7 @@ Health check endpoint.
 
 - Node.js 16+
 - npm or yarn
+- (Optional) [Fly CLI](https://fly.io/docs/getting-started/installing-flyctl/) for deployment
 
 ### Installation
 
@@ -210,6 +211,37 @@ Run tests with coverage:
 ```bash
 npm run test:run
 ```
+
+## Deployment
+
+### Quick Deploy to Fly.io
+
+Deploy the Riddle game to the cloud with a single command:
+
+```bash
+flyctl auth login
+flyctl deploy
+```
+
+Your app will be live at `https://riddle-game.fly.dev`
+
+### Full Deployment Guide
+
+For detailed deployment instructions, environment configuration, scaling, and troubleshooting, see [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md).
+
+### Docker
+
+Build and run with Docker:
+
+```bash
+# Build
+docker build -t riddle .
+
+# Run locally
+docker run -p 3000:3000 -p 3001:3001 riddle
+```
+
+Visit http://localhost:3000
 
 ## Game Mechanics
 
