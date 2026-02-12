@@ -1,0 +1,390 @@
+/* Sudoku Game Styles */
+
+:root {
+    --primary-color: #6366f1;
+    --primary-light: #818cf8;
+    --primary-dark: #4f46e5;
+    --success-color: #10b981;
+    --success-light: #6ee7b7;
+    --warning-color: #f59e0b;
+    --warning-light: #fcd34d;
+    --error-color: #ef4444;
+    --bg-color: #f9fafb;
+    --card-bg: #ffffff;
+    --border-color: #e5e7eb;
+    --text-dark: #111827;
+    --text-light: #6b7280;
+    --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -2px rgb(0 0 0 / 0.05);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+        'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+        sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    color: var(--text-dark);
+}
+
+.container {
+    background: var(--card-bg);
+    border-radius: 16px;
+    box-shadow: var(--shadow-lg);
+    padding: 40px;
+    max-width: 600px;
+    width: 100%;
+}
+
+/* Header */
+header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.subtitle {
+    color: var(--text-light);
+    font-size: 0.95rem;
+    font-style: italic;
+}
+
+/* Game Wrapper */
+.game-wrapper {
+    margin-bottom: 30px;
+}
+
+/* Game Board */
+.game-board {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 30px;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 8px;
+    background: var(--border-color);
+    padding: 12px;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+}
+
+.cell {
+    width: 60px;
+    height: 60px;
+    background: var(--card-bg);
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1.5rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: var(--text-dark);
+    user-select: none;
+}
+
+.cell:hover {
+    background: var(--bg-color);
+    transform: translateY(-2px);
+}
+
+.cell.selected {
+    background: var(--primary-light);
+    color: white;
+    border-color: var(--primary-dark);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.cell.solved {
+    background: var(--success-light);
+    color: white;
+    border-color: var(--success-color);
+    animation: solveSuccess 0.6s ease;
+}
+
+.cell.randomized {
+    background: var(--warning-light);
+    color: white;
+    border-color: var(--warning-color);
+    animation: randomizeFlash 0.6s ease;
+}
+
+.cell:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.cell.initial {
+    color: var(--primary-dark);
+    font-weight: 700;
+    background: var(--bg-color);
+    cursor: default;
+}
+
+/* Animations */
+@keyframes solveSuccess {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes randomizeFlash {
+    0% {
+        transform: scale(1);
+        background: var(--warning-light);
+    }
+    50% {
+        transform: scale(0.95);
+        background: var(--warning-color);
+    }
+    100% {
+        transform: scale(1);
+        background: var(--warning-light);
+    }
+}
+
+/* Controls */
+.controls {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-bottom: 30px;
+}
+
+.btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    color: white;
+    box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.3);
+}
+
+.btn-primary:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.4);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+.btn-secondary {
+    background: var(--border-color);
+    color: var(--text-dark);
+}
+
+.btn-secondary:hover {
+    background: var(--text-light);
+    color: white;
+    transform: translateY(-2px);
+}
+
+.btn-secondary:active {
+    transform: translateY(0);
+}
+
+/* Info Panel */
+.info-panel {
+    display: flex;
+    gap: 30px;
+    justify-content: center;
+    padding: 20px;
+    background: var(--bg-color);
+    border-radius: 12px;
+    margin-bottom: 30px;
+}
+
+.stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: var(--text-light);
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.stat-value {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+/* Instructions */
+.instructions {
+    background: var(--bg-color);
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 30px;
+}
+
+.instructions h3 {
+    font-size: 1.1rem;
+    margin-bottom: 12px;
+    color: var(--text-dark);
+}
+
+.instructions ul {
+    list-style: none;
+}
+
+.instructions li {
+    padding: 8px 0;
+    padding-left: 24px;
+    position: relative;
+    color: var(--text-light);
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.instructions li:before {
+    content: "→";
+    position: absolute;
+    left: 0;
+    color: var(--primary-color);
+    font-weight: bold;
+}
+
+/* Number Pad */
+.number-pad {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.pad-title {
+    text-align: center;
+    font-weight: 600;
+    color: var(--text-light);
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    letter-spacing: 0.5px;
+}
+
+.pad-buttons {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+}
+
+.num-btn {
+    padding: 12px;
+    border: 2px solid var(--primary-light);
+    background: var(--card-bg);
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--primary-dark);
+    transition: all 0.2s ease;
+}
+
+.num-btn:hover {
+    background: var(--primary-light);
+    color: white;
+    transform: translateY(-2px);
+}
+
+.num-btn:active {
+    transform: translateY(0);
+}
+
+.clear-btn {
+    grid-column: span 5;
+    background: var(--error-color);
+    color: white;
+    border-color: var(--error-color);
+}
+
+.clear-btn:hover {
+    background: #dc2626;
+    border-color: #dc2626;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .container {
+        padding: 20px;
+    }
+
+    header h1 {
+        font-size: 2rem;
+    }
+
+    .grid {
+        gap: 6px;
+        padding: 8px;
+    }
+
+    .cell {
+        width: 50px;
+        height: 50px;
+        font-size: 1.2rem;
+    }
+
+    .pad-buttons {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .clear-btn {
+        grid-column: span 3;
+    }
+
+    .info-panel {
+        gap: 15px;
+    }
+
+    .controls {
+        gap: 8px;
+    }
+
+    .btn {
+        padding: 10px 16px;
+        font-size: 0.9rem;
+    }
+}

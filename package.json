@@ -1,0 +1,17 @@
+{
+  "name": "riddle-sudoku",
+  "version": "1.0.0",
+  "description": "Dynamic 3x3 sudoku puzzle game with cascading randomization",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "jest",
+    "dev": "http-server public -p 8000",
+    "build": "echo 'Static site - no build needed'"
+  },
+  "keywords": ["sudoku", "puzzle", "game"],
+  "author": "Bloom",
+  "license": "MIT",
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
+}

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sudoku - Riddle</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Sudoku</h1>
+            <p class="subtitle">Dynamic puzzle with cascading randomization</p>
+        </header>
+
+        <div class="game-wrapper">
+            <div class="game-board">
+                <div class="grid" id="sudokuGrid">
+                    <!-- Grid cells will be generated here -->
+                </div>
+            </div>
+
+            <div class="controls">
+                <button id="newPuzzleBtn" class="btn btn-primary">New Puzzle</button>
+                <button id="resetBtn" class="btn btn-secondary">Reset</button>
+            </div>
+
+            <div class="info-panel">
+                <div class="stat">
+                    <span class="stat-label">Cells Solved:</span>
+                    <span class="stat-value" id="solvedCount">0</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Total Cells:</span>
+                    <span class="stat-value">9</span>
+                </div>
+            </div>
+
+            <div class="instructions">
+                <h3>How to Play</h3>
+                <ul>
+                    <li>Click a cell to select it</li>
+                    <li>Type 1-9 to fill the cell (must follow sudoku rules)</li>
+                    <li>Press Delete or 0 to clear a cell</li>
+                    <li>When you correctly solve a cell, another cell will randomly change</li>
+                    <li>Keep adapting as the puzzle shifts around you!</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="number-pad">
+            <div class="pad-title">Quick Fill:</div>
+            <div class="pad-buttons">
+                <button class="num-btn" data-num="1">1</button>
+                <button class="num-btn" data-num="2">2</button>
+                <button class="num-btn" data-num="3">3</button>
+                <button class="num-btn" data-num="4">4</button>
+                <button class="num-btn" data-num="5">5</button>
+                <button class="num-btn" data-num="6">6</button>
+                <button class="num-btn" data-num="7">7</button>
+                <button class="num-btn" data-num="8">8</button>
+                <button class="num-btn" data-num="9">9</button>
+                <button class="num-btn clear-btn" data-num="0">Clear</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../src/sudoku.js"></script>
+    <script src="../src/game.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>
