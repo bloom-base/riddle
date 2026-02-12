@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Literature Citation Matching Game - Riddle</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>📚 Literature Citation Matcher</h1>
+            <p class="subtitle">Match famous quotes to their authors from American history</p>
+        </header>
+
+        <div class="game-stats">
+            <div class="stat">
+                <span class="stat-label">Score:</span>
+                <span class="stat-value" id="score">0</span>
+            </div>
+            <div class="stat">
+                <span class="stat-label">Matches:</span>
+                <span class="stat-value" id="matches">0/5</span>
+            </div>
+            <div class="stat">
+                <span class="stat-label">Time:</span>
+                <span class="stat-value" id="timer">00:00</span>
+            </div>
+        </div>
+
+        <div class="game-board">
+            <div class="quotes-column">
+                <h2>Quotes</h2>
+                <div id="quotes-container" class="items-container"></div>
+            </div>
+
+            <div class="authors-column">
+                <h2>Authors/Works</h2>
+                <div id="authors-container" class="items-container"></div>
+            </div>
+        </div>
+
+        <div class="feedback-area">
+            <div id="feedback-message" class="feedback-hidden"></div>
+        </div>
+
+        <div class="game-controls">
+            <button id="reset-btn" class="btn btn-primary">Reset Game</button>
+            <button id="hint-btn" class="btn btn-secondary">💡 Hint</button>
+        </div>
+
+        <div class="completion-modal" id="completion-modal">
+            <div class="modal-content">
+                <h2>🎉 Puzzle Complete!</h2>
+                <p class="completion-score">Final Score: <span id="final-score">0</span></p>
+                <p class="completion-time">Time: <span id="final-time">00:00</span></p>
+                <button id="play-again-btn" class="btn btn-primary">Play Again</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>

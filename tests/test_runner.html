@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Tests - Literature Citation Matcher</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background: #1e1e1e;
+            color: #00ff00;
+            padding: 20px;
+            margin: 0;
+        }
+        #test-output {
+            background: #0d0d0d;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #444;
+            overflow-x: auto;
+        }
+        .pass {
+            color: #4caf50;
+        }
+        .fail {
+            color: #f44336;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Literature Citation Matcher - Test Suite</h1>
+    <pre id="test-output">Loading tests...</pre>
+
+    <!-- First load the game script -->
+    <script src="../public/game.js"></script>
+    <!-- Then load and run the tests -->
+    <script src="test_game.js"></script>
+</body>
+</html>
