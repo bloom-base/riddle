@@ -43,7 +43,7 @@ describe('App Component', () => {
       ]
     };
 
-    (global.fetch as any).mockResolvedValueOnce({
+    (global.fetch as any).mockResolvedValue({
       ok: true,
       json: async () => mockPuzzle
     });
@@ -51,8 +51,8 @@ describe('App Component', () => {
     render(<App />);
     
     await waitFor(() => {
-      expect(screen.getByText(/Opening Fragments/i)).toBeInTheDocument();
-      expect(screen.getByText(/Closing Fragments/i)).toBeInTheDocument();
+      expect(screen.getByText('It was the best of times,')).toBeInTheDocument();
+      expect(screen.getByText('it was the worst of times.')).toBeInTheDocument();
     });
   });
 
