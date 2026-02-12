@@ -1,0 +1,240 @@
+/* OBS Overlay - Optimized for Twitch streams */
+
+.obs-overlay {
+  width: 100%;
+  height: 100vh;
+  background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+  color: white;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.obs-container {
+  max-width: 400px;
+  width: 100%;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.obs-title {
+  text-align: center;
+}
+
+.obs-title h1 {
+  margin: 0;
+  font-size: 2.5rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 2px 10px rgba(102, 126, 234, 0.3);
+}
+
+.obs-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.obs-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.obs-stat-label {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  opacity: 0.8;
+}
+
+.obs-stat-value {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #667eea;
+}
+
+.obs-solvers {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  border: 2px solid rgba(102, 126, 234, 0.3);
+  overflow: hidden;
+}
+
+.obs-solvers-title {
+  background: rgba(102, 126, 234, 0.2);
+  padding: 0.75rem 1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 0.9rem;
+  border-bottom: 1px solid rgba(102, 126, 234, 0.3);
+}
+
+.obs-solvers-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.obs-solver {
+  display: grid;
+  grid-template-columns: 30px 1fr auto;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  animation: slideIn 0.5s ease-out;
+}
+
+.obs-solver:last-child {
+  border-bottom: none;
+}
+
+.obs-solver:nth-child(1) {
+  background: rgba(255, 193, 7, 0.05);
+  border-left: 3px solid #ffc107;
+}
+
+.obs-solver:nth-child(2) {
+  background: rgba(192, 192, 192, 0.05);
+  border-left: 3px solid #c0c0c0;
+}
+
+.obs-solver:nth-child(3) {
+  background: rgba(205, 127, 50, 0.05);
+  border-left: 3px solid #cd7f32;
+}
+
+.obs-solver:nth-child(n + 4) {
+  border-left: 3px solid rgba(102, 126, 234, 0.5);
+}
+
+.obs-solver-rank {
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-align: center;
+  color: #667eea;
+}
+
+.obs-solver-name {
+  font-weight: 600;
+  font-size: 1rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.obs-solver-time {
+  font-family: 'Courier New', monospace;
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-align: right;
+  min-width: 50px;
+}
+
+.obs-cta {
+  text-align: center;
+  padding: 1rem;
+  background: rgba(102, 126, 234, 0.1);
+  border-radius: 8px;
+  border: 1px solid rgba(102, 126, 234, 0.3);
+}
+
+.obs-cta p {
+  margin: 0;
+  font-size: 0.95rem;
+  letter-spacing: 0.5px;
+}
+
+/* Animation for new solvers */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Responsive design for different stream resolutions */
+
+/* 16:9 aspect ratio - standard */
+@media (max-width: 1920px) {
+  .obs-container {
+    max-width: 500px;
+    padding: 2.5rem;
+  }
+
+  .obs-title h1 {
+    font-size: 2.8rem;
+  }
+}
+
+/* Smaller window size */
+@media (max-width: 600px) {
+  .obs-container {
+    max-width: 100%;
+    padding: 1rem;
+    gap: 1rem;
+  }
+
+  .obs-title h1 {
+    font-size: 2rem;
+  }
+
+  .obs-stats {
+    padding: 0.75rem;
+    gap: 0.75rem;
+  }
+
+  .obs-stat-value {
+    font-size: 1.5rem;
+  }
+
+  .obs-solvers-title {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8rem;
+  }
+
+  .obs-solver {
+    padding: 0.5rem 0.75rem;
+    gap: 0.5rem;
+    grid-template-columns: 25px 1fr auto;
+  }
+
+  .obs-solver-rank {
+    font-size: 0.8rem;
+  }
+
+  .obs-solver-name {
+    font-size: 0.9rem;
+  }
+
+  .obs-solver-time {
+    font-size: 0.85rem;
+    min-width: 45px;
+  }
+
+  .obs-cta {
+    padding: 0.75rem;
+  }
+
+  .obs-cta p {
+    font-size: 0.85rem;
+  }
+}

@@ -21,9 +21,15 @@ interface Match {
 
 interface QuoteMatchingPuzzleProps {
   puzzle: Puzzle;
+  onComplete?: (completionTimeMs: number) => void;
+  startTime?: number;
 }
 
-const QuoteMatchingPuzzle: React.FC<QuoteMatchingPuzzleProps> = ({ puzzle }) => {
+const QuoteMatchingPuzzle: React.FC<QuoteMatchingPuzzleProps> = ({ 
+  puzzle, 
+  onComplete,
+  startTime = 0
+}) => {
   const [matches, setMatches] = useState<Match[]>([]);
   const [draggedOpening, setDraggedOpening] = useState<string | null>(null);
   const [validationResult, setValidationResult] = useState<{
@@ -163,12 +169,31 @@ const QuoteMatchingPuzzle: React.FC<QuoteMatchingPuzzleProps> = ({ puzzle }) => 
   };
 
   if (submitted && validationResult?.allCorrect) {
+    const completionTime = startTime ? Date.now() - startTime : 0;
+    
+    // Call onComplete callback to submit to leaderboard
+    React.useEffect(() => {
+      if (onComplete && completionTime > 0) {
+        onComplete(completionTime);
+      }
+    }, []);
+
+    const formatTime = (ms: number): string => {
+      const seconds = Math.floor(ms / 1000);
+      const minutes = Math.floor(seconds / 60);
+      const secs = seconds % 60;
+      return `${minutes}:${secs.toString().padStart(2, '0')}`;
+    };
+
     return (
       <div className="puzzle-container">
         <div className="completion-screen">
           <div className="celebration">🎉</div>
           <h2>Congratulations!</h2>
           <p>You've matched all the quotes correctly!</p>
+          <div className="completion-time">
+            ⏱️ Time: {formatTime(completionTime)}
+          </div>
           <div className="matches-summary">
             <h3>Your matches:</h3>
             {matches.map(renderMatchLine)}
