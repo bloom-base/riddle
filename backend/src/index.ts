@@ -37,11 +37,23 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 });
 
 /**
+ * GET /api/puzzle
  * GET /api/puzzle/:date
  * Get today's puzzle or puzzle for a specific date
  * Date format: YYYY-MM-DD (optional, defaults to today)
  */
-app.get('/api/puzzle/:date?', (req: Request, res: Response) => {
+app.get('/api/puzzle', (req: Request, res: Response) => {
+  try {
+    const date = new Date();
+    const puzzle = generatePuzzle(date);
+    res.json(puzzle);
+  } catch (error) {
+    console.error('Error generating puzzle:', error);
+    res.status(500).json({ error: 'Failed to generate puzzle' });
+  }
+});
+
+app.get('/api/puzzle/:date', (req: Request, res: Response) => {
   try {
     let date = new Date();
     

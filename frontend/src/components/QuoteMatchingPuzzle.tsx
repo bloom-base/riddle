@@ -137,6 +137,16 @@ const QuoteMatchingPuzzle: React.FC<QuoteMatchingPuzzleProps> = ({
     }
   };
 
+  // Call onComplete callback when puzzle is completed
+  useEffect(() => {
+    if (submitted && validationResult?.allCorrect && startTime && onComplete) {
+      const completionTime = Date.now() - startTime;
+      if (completionTime > 0) {
+        onComplete(completionTime);
+      }
+    }
+  }, [submitted, validationResult, startTime, onComplete]);
+
   // Render match line connecting opening to closing
   const renderMatchLine = (match: Match) => {
     const opening = puzzle.openings.find((o) => o.id === match.openingId);
@@ -170,13 +180,6 @@ const QuoteMatchingPuzzle: React.FC<QuoteMatchingPuzzleProps> = ({
 
   if (submitted && validationResult?.allCorrect) {
     const completionTime = startTime ? Date.now() - startTime : 0;
-    
-    // Call onComplete callback to submit to leaderboard
-    React.useEffect(() => {
-      if (onComplete && completionTime > 0) {
-        onComplete(completionTime);
-      }
-    }, []);
 
     const formatTime = (ms: number): string => {
       const seconds = Math.floor(ms / 1000);
