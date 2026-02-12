@@ -17,6 +17,9 @@ Match opening and closing fragments from famous U.S. literature quotes to comple
 - **Real-time Validation**: Immediate feedback on correct/incorrect matches
 - **Famous Literature**: Curated quotes from Twain, Fitzgerald, Steinbeck, Hawthorne, Morrison, and more
 - **Accessible Difficulty**: Targets high school senior level - recognizable but not trivial
+- **Twitch Integration**: Live leaderboards, OBS overlays, and community engagement
+- **Countdown Timer**: Shows time until next daily puzzle reset
+- **Global Leaderboard**: Compete with other players, track fastest solvers
 
 ## Tech Stack
 
@@ -283,6 +286,37 @@ CSS variables defined at root:
 - Safari: Latest 2 versions
 - Mobile browsers: iOS Safari 12+, Chrome Android
 
+## Twitch Integration 🎬
+
+Riddle is built for streamers! Perfect for community engagement and live gaming sessions.
+
+### OBS Overlay
+Add a browser source to your OBS with the `/demo` page to show:
+- Live leaderboard with top 5 solvers
+- Countdown timer for next puzzle
+- Daily stats (total solvers, fastest time)
+- Beautiful dark theme optimized for streams
+
+### Live Leaderboard
+- Real-time updates as viewers complete the puzzle
+- Players enter their username to compete
+- Tracks fastest times and personal records
+- Shareable results on social media
+
+### Chat Integration
+Easily integrate with Twitch bots (Nightbot, Streamlabs, etc.):
+- `!riddle` - Share puzzle link
+- `!stats` - Show today's statistics
+- `!leaderboard` - Display top solvers
+
+### For Streamers
+See [TWITCH_INTEGRATION.md](./TWITCH_INTEGRATION.md) for:
+- Complete setup guide
+- API endpoints for custom bots
+- Stream overlay examples
+- Community engagement ideas
+- Troubleshooting
+
 ## Contributing
 
 Contributions are welcome! Areas for expansion:
@@ -290,10 +324,12 @@ Contributions are welcome! Areas for expansion:
 - [ ] More puzzle types (anagrams, word chains, etc.)
 - [ ] User accounts and streak tracking
 - [ ] Difficulty levels
-- [ ] Leaderboards
-- [ ] Share puzzle results
+- [ ] Share puzzle results with sharable images
 - [ ] Dark mode
 - [ ] Internationalization
+- [ ] Database persistence for leaderboards
+- [ ] Twitch OAuth integration
+- [ ] Channel points rewards
 
 ---
 

@@ -302,7 +302,28 @@
 .completion-screen > p {
   color: var(--text-light);
   font-size: 1.1rem;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
+}
+
+.completion-time {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 1rem;
+  border-radius: 8px;
+  font-size: 1.5rem;
+  font-weight: 700;
+  font-family: 'Courier New', monospace;
+  margin: 1rem 0 2rem 0;
+  animation: pulse 2s ease-in-out;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
 }
 
 .matches-summary {
