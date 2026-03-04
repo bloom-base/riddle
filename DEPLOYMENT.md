@@ -21,8 +21,8 @@ For detailed instructions, see [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md).
 ## Local Development
 
 ### Prerequisites
-- Node.js 16+
-- npm or yarn
+- Node.js 20+
+- npm 10+ (comes with Node.js 20)
 
 ### Setup
 
@@ -123,9 +123,11 @@ Monitor these key endpoints:
 
 The deployment uses a multi-stage Docker build:
 
-1. **Builder Stage**: Installs dependencies and builds both frontend and backend
-2. **Runtime Stage**: Lightweight Alpine Linux with only production dependencies
+1. **Builder Stage** (Node 20 Alpine): Installs dependencies and builds both frontend and backend
+2. **Runtime Stage** (Node 20 Alpine): Lightweight Alpine Linux with only production dependencies
 3. **Service Startup**: Serves frontend on port 3000, backend API on port 3001
+
+**Note**: Node 20 is required for lockfileVersion 3 support in package-lock.json (workspace monorepo).
 
 ## Troubleshooting
 

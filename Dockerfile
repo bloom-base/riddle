@@ -1,6 +1,6 @@
 # Multi-stage build for Riddle application
 # Stage 1: Build frontend and backend
-FROM node:18-alpine as builder
+FROM node:20-alpine as builder
 
 WORKDIR /app
 
@@ -20,7 +20,7 @@ COPY frontend ./frontend
 RUN npm run build
 
 # Stage 2: Runtime image
-FROM node:18-alpine
+FROM node:20-alpine
 
 WORKDIR /app
 
