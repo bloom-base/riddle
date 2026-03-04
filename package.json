@@ -1,6 +1,6 @@
 {
   "name": "riddle",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "One puzzle a day keeps the brain sharp. Beautiful, addictive, and endlessly expandable.",
   "private": true,
   "scripts": {

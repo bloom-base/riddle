@@ -2,6 +2,8 @@
 
 This guide explains how to deploy the Riddle application to production using Docker and Fly.io.
 
+> **Latest Deployment**: Version 1.0.1 - Deployment pipeline triggered on 2024
+
 ## Prerequisites
 
 - [Fly CLI](https://fly.io/docs/getting-started/installing-flyctl/) installed and authenticated
