@@ -4,20 +4,26 @@ FROM node:20-alpine as builder
 
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
+# Install backend dependencies and build
 COPY backend/package*.json ./backend/
-COPY frontend/package*.json ./frontend/
+WORKDIR /app/backend
+RUN npm install --no-audit --prefer-offline
 
-# Install dependencies
-RUN npm ci
-
-# Copy source code
-COPY backend ./backend
-COPY frontend ./frontend
-
-# Build both frontend and backend
+# Copy backend source and build
+COPY backend ./
 RUN npm run build
+
+# Install frontend dependencies and build
+WORKDIR /app
+COPY frontend/package*.json ./frontend/
+WORKDIR /app/frontend
+RUN npm install --no-audit --prefer-offline
+
+# Copy frontend source and build
+COPY frontend ./
+RUN npm run build
+
+WORKDIR /app
 
 # Stage 2: Runtime image
 FROM node:20-alpine
