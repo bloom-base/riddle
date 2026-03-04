@@ -9,6 +9,7 @@ export interface LeaderboardEntry {
   completionTime: number; // milliseconds
   timestamp: string; // ISO timestamp
   date: string; // YYYY-MM-DD
+  hintsUsed?: number; // Number of hints used (0 = no hints)
 }
 
 export interface DailyStats {
@@ -28,7 +29,8 @@ const leaderboards = new Map<string, LeaderboardEntry[]>();
 export function submitCompletion(
   date: string,
   username: string,
-  completionTime: number
+  completionTime: number,
+  hintsUsed: number = 0
 ): LeaderboardEntry {
   if (!leaderboards.has(date)) {
     leaderboards.set(date, []);
@@ -38,7 +40,8 @@ export function submitCompletion(
     username: sanitizeUsername(username),
     completionTime,
     timestamp: new Date().toISOString(),
-    date
+    date,
+    hintsUsed
   };
 
   const entries = leaderboards.get(date)!;
@@ -53,12 +56,21 @@ export function submitCompletion(
 }
 
 /**
- * Get leaderboard for a specific date, sorted by completion time
+ * Get leaderboard for a specific date, sorted by completion time, then by hints used
  */
 export function getLeaderboard(date: string, limit: number = 20): LeaderboardEntry[] {
   const entries = leaderboards.get(date) || [];
   return entries
-    .sort((a, b) => a.completionTime - b.completionTime)
+    .sort((a, b) => {
+      // Primary sort: completion time (faster is better)
+      if (a.completionTime !== b.completionTime) {
+        return a.completionTime - b.completionTime;
+      }
+      // Secondary sort: hints used (fewer is better)
+      const aHints = a.hintsUsed || 0;
+      const bHints = b.hintsUsed || 0;
+      return aHints - bHints;
+    })
     .slice(0, limit);
 }
 

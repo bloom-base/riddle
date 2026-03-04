@@ -220,3 +220,117 @@ describe('QuoteMatchingPuzzle Component', () => {
     expect(submitBtn).toHaveTextContent(/0\/2/);
   });
 });
+
+describe('QuoteMatchingPuzzle - Hints', () => {
+  it('should display hint button', () => {
+    render(<QuoteMatchingPuzzle puzzle={mockPuzzle} />);
+    
+    expect(screen.getByRole('button', { name: /hint/i })).toBeInTheDocument();
+    expect(screen.getByText(/0 used/i)).toBeInTheDocument();
+  });
+
+  it('should increment hints counter when hint is clicked', () => {
+    render(<QuoteMatchingPuzzle puzzle={mockPuzzle} />);
+    
+    const hintButton = screen.getByRole('button', { name: /hint/i });
+    fireEvent.click(hintButton);
+    
+    expect(screen.getByText(/1 used/i)).toBeInTheDocument();
+  });
+
+  it('should reveal characters when hint is used', () => {
+    render(<QuoteMatchingPuzzle puzzle={mockPuzzle} />);
+    
+    const hintButton = screen.getByRole('button', { name: /hint/i });
+    fireEvent.click(hintButton);
+    
+    // Check for revealed character class
+    const revealedChars = document.querySelectorAll('.revealed-char');
+    expect(revealedChars.length).toBeGreaterThan(0);
+  });
+
+  it('should pass hints count to onComplete callback', async () => {
+    global.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        allCorrect: true,
+        results: {
+          opening_1: true,
+          opening_2: true
+        }
+      })
+    });
+
+    const onComplete = vi.fn();
+
+    render(
+      <QuoteMatchingPuzzle 
+        puzzle={mockPuzzle} 
+        onComplete={onComplete}
+        startTime={Date.now()}
+      />
+    );
+    
+    // Use hint
+    const hintButton = screen.getByRole('button', { name: /hint/i });
+    fireEvent.click(hintButton);
+    fireEvent.click(hintButton);
+    
+    // Make both matches
+    const openingElements = document.querySelectorAll('.fragment.opening');
+    const closingElements = document.querySelectorAll('.fragment.closing');
+    
+    fireEvent.dragStart(openingElements[0]);
+    fireEvent.drop(closingElements[0]);
+    
+    fireEvent.dragStart(openingElements[1]);
+    fireEvent.drop(closingElements[1]);
+    
+    // Submit
+    const submitBtn = screen.getByRole('button', { name: /✓ Submit All Matches/i });
+    fireEvent.click(submitBtn);
+    
+    // Wait for completion
+    await waitFor(() => {
+      expect(onComplete).toHaveBeenCalled();
+    });
+    
+    // Check that hints count was passed
+    const call = onComplete.mock.calls[0];
+    expect(call[1]).toBe(2); // Second parameter should be hints count
+  });
+
+  it('should hide hint button after submission', async () => {
+    global.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        allCorrect: true,
+        results: {
+          opening_1: true,
+          opening_2: true
+        }
+      })
+    });
+
+    render(<QuoteMatchingPuzzle puzzle={mockPuzzle} />);
+    
+    // Make matches
+    const openingElements = document.querySelectorAll('.fragment.opening');
+    const closingElements = document.querySelectorAll('.fragment.closing');
+    
+    fireEvent.dragStart(openingElements[0]);
+    fireEvent.drop(closingElements[0]);
+    
+    fireEvent.dragStart(openingElements[1]);
+    fireEvent.drop(closingElements[1]);
+    
+    // Submit
+    const submitBtn = screen.getByRole('button', { name: /✓ Submit All Matches/i });
+    fireEvent.click(submitBtn);
+    
+    // Hint button should be hidden
+    await waitFor(() => {
+      expect(screen.queryByRole('button', { name: /hint/i })).not.toBeInTheDocument();
+    });
+  });
+});

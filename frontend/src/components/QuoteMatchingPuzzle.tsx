@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './QuoteMatchingPuzzle.css';
+import HintButton from './HintButton';
 
 interface Fragment {
   id: string;
@@ -21,7 +22,7 @@ interface Match {
 
 interface QuoteMatchingPuzzleProps {
   puzzle: Puzzle;
-  onComplete?: (completionTimeMs: number) => void;
+  onComplete?: (completionTimeMs: number, hintsUsed: number) => void;
   startTime?: number;
 }
 
@@ -38,10 +39,62 @@ const QuoteMatchingPuzzle: React.FC<QuoteMatchingPuzzleProps> = ({
     results?: Record<string, boolean>;
   } | null>(null);
   const [submitted, setSubmitted] = useState(false);
+  const [hintsUsed, setHintsUsed] = useState<number>(0);
+  const [revealedCharacters, setRevealedCharacters] = useState<Set<string>>(new Set());
 
   // Get the closing fragment ID that matches a given opening
   const getMatchedClosingId = (openingId: string): string | undefined => {
     return matches.find((m) => m.openingId === openingId)?.closingId;
+  };
+
+  // Handle hint reveal - reveals one character from a random unmatched pair
+  const handleHintClick = () => {
+    // Find unmatched pairs
+    const unmatchedOpenings = puzzle.openings.filter(
+      (opening) => !matches.some((m) => m.openingId === opening.id)
+    );
+
+    if (unmatchedOpenings.length === 0) {
+      return; // All matched already
+    }
+
+    // Pick a random unmatched opening
+    const randomOpening = unmatchedOpenings[Math.floor(Math.random() * unmatchedOpenings.length)];
+    
+    // Find the correct closing for this opening
+    const correctMatch = puzzle.correctMatches.find((m) => m.openingId === randomOpening.id);
+    if (!correctMatch) return;
+
+    const correctClosing = puzzle.closings.find((c) => c.id === correctMatch.closingId);
+    if (!correctClosing) return;
+
+    // Find characters in the closing that haven't been revealed yet
+    const closingChars = correctClosing.text.split('');
+    const unrevealedIndices = closingChars
+      .map((_, idx) => idx)
+      .filter((idx) => !revealedCharacters.has(`${correctMatch.closingId}_${idx}`));
+
+    if (unrevealedIndices.length === 0) {
+      // All characters already revealed, find another pair
+      return handleHintClick();
+    }
+
+    // Reveal multiple characters at once for better hint value
+    const numToReveal = Math.min(3, unrevealedIndices.length);
+    const indicesToReveal = [];
+    for (let i = 0; i < numToReveal; i++) {
+      const randomIdx = unrevealedIndices[Math.floor(Math.random() * unrevealedIndices.length)];
+      indicesToReveal.push(randomIdx);
+      unrevealedIndices.splice(unrevealedIndices.indexOf(randomIdx), 1);
+    }
+
+    // Update revealed characters
+    const newRevealed = new Set(revealedCharacters);
+    indicesToReveal.forEach((idx) => {
+      newRevealed.add(`${correctMatch.closingId}_${idx}`);
+    });
+    setRevealedCharacters(newRevealed);
+    setHintsUsed(hintsUsed + 1);
   };
 
   // Handle drag start on opening fragment
@@ -142,10 +195,25 @@ const QuoteMatchingPuzzle: React.FC<QuoteMatchingPuzzleProps> = ({
     if (submitted && validationResult?.allCorrect && startTime && onComplete) {
       const completionTime = Date.now() - startTime;
       if (completionTime > 0) {
-        onComplete(completionTime);
+        onComplete(completionTime, hintsUsed);
       }
     }
-  }, [submitted, validationResult, startTime, onComplete]);
+  }, [submitted, validationResult, startTime, onComplete, hintsUsed]);
+
+  // Render fragment text with revealed hints
+  const renderFragmentText = (fragmentId: string, text: string) => {
+    return text.split('').map((char, idx) => {
+      const isRevealed = revealedCharacters.has(`${fragmentId}_${idx}`);
+      return (
+        <span
+          key={idx}
+          className={isRevealed ? 'revealed-char' : ''}
+        >
+          {char}
+        </span>
+      );
+    });
+  };
 
   // Render match line connecting opening to closing
   const renderMatchLine = (match: Match) => {
@@ -260,12 +328,23 @@ const QuoteMatchingPuzzle: React.FC<QuoteMatchingPuzzleProps> = ({
                 onDragOver={(e) => e.preventDefault()}
                 onDrop={() => handleDropOnClosing(closing.id)}
               >
-                <span className="fragment-text">{closing.text}</span>
+                <span className="fragment-text">
+                  {renderFragmentText(closing.id, closing.text)}
+                </span>
               </div>
             ))}
           </div>
         </div>
       </div>
+
+      {/* Hint Button */}
+      {!submitted && (
+        <HintButton
+          onHintClick={handleHintClick}
+          hintsUsed={hintsUsed}
+          disabled={matches.length === puzzle.openings.length}
+        />
+      )}
 
       {/* Matches Summary */}
       {matches.length > 0 && (

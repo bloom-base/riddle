@@ -48,6 +48,19 @@ describe('LeaderboardService', () => {
 
       expect(leaderboard.length).toBe(2);
     });
+
+    it('should track hints used', () => {
+      const entry = submitCompletion(testDate, 'HintUser', 45000, 3);
+      expect(entry.hintsUsed).toBe(3);
+
+      const leaderboard = getLeaderboard(testDate);
+      expect(leaderboard[0].hintsUsed).toBe(3);
+    });
+
+    it('should default hints to 0 when not provided', () => {
+      const entry = submitCompletion(testDate, 'NoHints', 35000);
+      expect(entry.hintsUsed).toBe(0);
+    });
   });
 
   describe('getLeaderboard', () => {
@@ -66,6 +79,18 @@ describe('LeaderboardService', () => {
       expect(leaderboard[0].username).toBe('Fast');
       expect(leaderboard[1].username).toBe('Medium');
       expect(leaderboard[2].username).toBe('Slow');
+    });
+
+    it('should sort by hints used when completion times are equal', () => {
+      submitCompletion(testDate, 'WithHints', 30000, 5);
+      submitCompletion(testDate, 'NoHints', 30000, 0);
+      submitCompletion(testDate, 'SomeHints', 30000, 2);
+
+      const leaderboard = getLeaderboard(testDate);
+
+      expect(leaderboard[0].username).toBe('NoHints');
+      expect(leaderboard[1].username).toBe('SomeHints');
+      expect(leaderboard[2].username).toBe('WithHints');
     });
 
     it('should respect limit parameter', () => {

@@ -15,11 +15,33 @@ Match opening and closing fragments from famous U.S. literature quotes to comple
 - **Responsive Design**: Works seamlessly on desktop, tablet, and mobile
 - **Interactive Matching**: Drag-and-drop on desktop, tap-based on mobile
 - **Real-time Validation**: Immediate feedback on correct/incorrect matches
+- **Progressive Hint System**: Get unstuck with character reveals that affect leaderboard ranking
 - **Famous Literature**: Curated quotes from Twain, Fitzgerald, Steinbeck, Hawthorne, Morrison, and more
 - **Accessible Difficulty**: Targets high school senior level - recognizable but not trivial
 - **Twitch Integration**: Live leaderboards, OBS overlays, and community engagement
 - **Countdown Timer**: Shows time until next daily puzzle reset
-- **Global Leaderboard**: Compete with other players, track fastest solvers
+- **Global Leaderboard**: Compete with other players, track fastest solvers and hint usage
+
+## Hint System 💡
+
+Stuck on a puzzle? The progressive hint system helps players without completely giving away the answer:
+
+- **Character Reveals**: Each hint reveals 3 random characters from one closing fragment
+- **Smart Targeting**: Hints focus on unmatched pairs to be most helpful
+- **Leaderboard Impact**: Hint usage is tracked and affects ranking when completion times are equal
+- **Visual Feedback**: Revealed characters appear with a glowing animation
+- **Usage Tracking**: Players can see how many hints they've used, displayed on the leaderboard
+
+**How it works:**
+1. Click the "💡 Hint" button when you need help
+2. Watch as characters are revealed with a smooth fade-in animation
+3. Use the revealed characters to identify the correct match
+4. Your hint count is recorded and shown on the leaderboard
+
+**Leaderboard Ranking:**
+- Primary: Fastest completion time wins
+- Secondary: When times are equal, fewer hints ranks higher
+- Badge: Players who use hints get a 💡×N badge showing hint count
 
 ## Tech Stack
 
@@ -126,6 +148,60 @@ Health check endpoint.
   "status": "ok",
   "timestamp": "2024-01-15T10:30:00.000Z"
 }
+```
+
+### POST /api/leaderboard/submit
+
+Submit a completion to the leaderboard.
+
+**Request Body:**
+```json
+{
+  "date": "2024-01-15",
+  "username": "Player1",
+  "completionTime": 45000,
+  "hintsUsed": 2
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "entry": {
+    "username": "Player1",
+    "completionTime": 45000,
+    "timestamp": "2024-01-15T10:30:00.000Z",
+    "date": "2024-01-15",
+    "hintsUsed": 2
+  },
+  "stats": {
+    "totalSolvers": 15,
+    "fastestTime": 30000
+  }
+}
+```
+
+### GET /api/leaderboard/:date
+
+Get the leaderboard for a specific date.
+
+**Response:**
+```json
+[
+  {
+    "username": "FastSolver",
+    "completionTime": 30000,
+    "timestamp": "2024-01-15T10:00:00.000Z",
+    "hintsUsed": 0
+  },
+  {
+    "username": "Player1",
+    "completionTime": 45000,
+    "timestamp": "2024-01-15T10:30:00.000Z",
+    "hintsUsed": 2
+  }
+]
 ```
 
 ## Getting Started

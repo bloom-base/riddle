@@ -60,7 +60,7 @@ function App() {
     }
   };
 
-  const handlePuzzleComplete = async (completionTimeMs: number) => {
+  const handlePuzzleComplete = async (completionTimeMs: number, hintsUsed: number) => {
     if (!puzzle || !username) return;
 
     try {
@@ -70,7 +70,8 @@ function App() {
         body: JSON.stringify({
           date: puzzle.date,
           username,
-          completionTime: completionTimeMs
+          completionTime: completionTimeMs,
+          hintsUsed
         })
       });
     } catch (error) {

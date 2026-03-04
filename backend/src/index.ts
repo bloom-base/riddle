@@ -116,11 +116,11 @@ app.get('/api/health', (req: Request, res: Response) => {
 /**
  * POST /api/leaderboard/submit
  * Submit a completion time to the leaderboard
- * Body: { date: string, username: string, completionTime: number }
+ * Body: { date: string, username: string, completionTime: number, hintsUsed?: number }
  */
 app.post('/api/leaderboard/submit', (req: Request, res: Response) => {
   try {
-    const { date, username, completionTime } = req.body;
+    const { date, username, completionTime, hintsUsed } = req.body;
 
     if (!date || !username || completionTime === undefined) {
       return res.status(400).json({ error: 'Missing required fields' });
@@ -130,7 +130,8 @@ app.post('/api/leaderboard/submit', (req: Request, res: Response) => {
       return res.status(400).json({ error: 'Invalid completion time' });
     }
 
-    const entry = submitCompletion(date, username, completionTime);
+    const hints = typeof hintsUsed === 'number' ? hintsUsed : 0;
+    const entry = submitCompletion(date, username, completionTime, hints);
     res.json({
       success: true,
       entry,

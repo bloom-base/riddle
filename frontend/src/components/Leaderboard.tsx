@@ -5,6 +5,7 @@ export interface LeaderboardEntry {
   username: string;
   completionTime: number;
   timestamp: string;
+  hintsUsed?: number;
 }
 
 export interface DailyStats {
@@ -110,7 +111,14 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ date }) => {
                 {index === 2 && '🥉'}
                 {index > 2 && `#${index + 1}`}
               </div>
-              <div className="name">{entry.username}</div>
+              <div className="name">
+                {entry.username}
+                {entry.hintsUsed ? (
+                  <span className="hints-badge" title={`Used ${entry.hintsUsed} hint${entry.hintsUsed > 1 ? 's' : ''}`}>
+                    💡×{entry.hintsUsed}
+                  </span>
+                ) : null}
+              </div>
               <div className="time">{formatTime(entry.completionTime)}</div>
             </div>
           ))}
