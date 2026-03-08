@@ -3,6 +3,8 @@ import './App.css';
 import QuoteMatchingPuzzle from './components/QuoteMatchingPuzzle';
 import Leaderboard from './components/Leaderboard';
 import CountdownTimer from './components/CountdownTimer';
+import StreakCounter from './components/StreakCounter';
+import { getCurrentStreak, recordCompletion, isMilestone, type StreakData } from './utils/streakManager';
 
 interface Puzzle {
   date: string;
@@ -18,6 +20,8 @@ function App() {
   const [username, setUsername] = useState<string>('');
   const [showUsernamePrompt, setShowUsernamePrompt] = useState(false);
   const [startTime, setStartTime] = useState<number | null>(null);
+  const [streakData, setStreakData] = useState<StreakData | null>(null);
+  const [showStreakCelebration, setShowStreakCelebration] = useState(false);
 
   useEffect(() => {
     const fetchPuzzle = async () => {
@@ -39,6 +43,10 @@ function App() {
         } else {
           setShowUsernamePrompt(true);
         }
+
+        // Load current streak data
+        const currentStreak = getCurrentStreak();
+        setStreakData(currentStreak);
       } catch (err) {
         const message = err instanceof Error ? err.message : 'Unknown error';
         setError(message);
@@ -64,6 +72,7 @@ function App() {
     if (!puzzle || !username) return;
 
     try {
+      // Submit to leaderboard
       await fetch('/api/leaderboard/submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -73,6 +82,17 @@ function App() {
           completionTime: completionTimeMs
         })
       });
+
+      // Update streak
+      const result = recordCompletion(puzzle.date);
+      if (result.isNewCompletion) {
+        setStreakData(result.streakData);
+        
+        // Show celebration if it's a milestone
+        if (isMilestone(result.streakData.currentStreak)) {
+          setShowStreakCelebration(true);
+        }
+      }
     } catch (error) {
       console.error('Error submitting to leaderboard:', error);
     }
@@ -170,6 +190,15 @@ function App() {
         )}
 
         <CountdownTimer />
+        
+        {streakData && streakData.currentStreak > 0 && (
+          <StreakCounter 
+            streak={streakData.currentStreak}
+            showCelebration={showStreakCelebration}
+            onCelebrationEnd={() => setShowStreakCelebration(false)}
+          />
+        )}
+        
         <QuoteMatchingPuzzle 
           puzzle={puzzle} 
           onComplete={handlePuzzleComplete}
