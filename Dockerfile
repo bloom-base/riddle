@@ -9,8 +9,8 @@ COPY package*.json ./
 COPY backend/package*.json ./backend/
 COPY frontend/package*.json ./frontend/
 
-# Install dependencies
-RUN npm ci
+# Install all dependencies (including devDependencies for building)
+RUN npm ci --include=dev
 
 # Copy source code
 COPY backend ./backend
@@ -24,18 +24,17 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-# Install serve to serve the frontend
-RUN npm install -g serve
-
-# Copy package files from builder
+# Copy package files and built artifacts from builder
 COPY --from=builder /app/package*.json ./
 COPY --from=builder /app/backend/package*.json ./backend/
 COPY --from=builder /app/backend/dist ./backend/dist
-COPY --from=builder /app/backend/node_modules ./backend/node_modules
 COPY --from=builder /app/frontend/dist ./frontend/dist
 
-# Expose ports
-EXPOSE 3000 3001
+# Install only production dependencies for backend
+RUN cd backend && npm ci --omit=dev
 
-# Start both frontend and backend
-CMD ["sh", "-c", "serve -s frontend/dist -l 3000 & node backend/dist/index.js"]
+# Expose backend port
+EXPOSE 3001
+
+# Start backend (serves both API and frontend static files)
+CMD ["node", "backend/dist/index.js"]

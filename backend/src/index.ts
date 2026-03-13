@@ -6,6 +6,8 @@
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { generatePuzzle, validateMatches, PuzzleMatch } from './services/puzzleService.js';
 import {
   submitCompletion,
@@ -17,12 +19,21 @@ import {
 
 dotenv.config();
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const app = express();
 const PORT = process.env.PORT || 3001;
 
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+// Serve static frontend files in production
+if (process.env.NODE_ENV === 'production') {
+  const frontendPath = path.join(__dirname, '../../frontend/dist');
+  app.use(express.static(frontendPath));
+}
 
 // Request logging middleware
 app.use((req: Request, res: Response, next: NextFunction) => {
@@ -208,11 +219,21 @@ app.get('/api/leaderboard/:date/user/:username', (req: Request, res: Response) =
 });
 
 /**
- * 404 handler
+ * Serve frontend for all non-API routes (SPA fallback)
  */
-app.use((req: Request, res: Response) => {
-  res.status(404).json({ error: 'Not found' });
-});
+if (process.env.NODE_ENV === 'production') {
+  app.get('*', (req: Request, res: Response) => {
+    const frontendPath = path.join(__dirname, '../../frontend/dist/index.html');
+    res.sendFile(frontendPath);
+  });
+} else {
+  /**
+   * 404 handler (development only)
+   */
+  app.use((req: Request, res: Response) => {
+    res.status(404).json({ error: 'Not found' });
+  });
+}
 
 // Start server
 app.listen(PORT, () => {
