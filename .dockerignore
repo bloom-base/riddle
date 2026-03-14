@@ -45,8 +45,3 @@ SUMMARY.md
 
 # CI/CD
 .github
-
-# Package lock files (we use npm ci in container)
-package-lock.json
-backend/package-lock.json
-frontend/package-lock.json
