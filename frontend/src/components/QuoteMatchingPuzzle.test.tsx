@@ -2,6 +2,54 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import QuoteMatchingPuzzle from './QuoteMatchingPuzzle';
 
+// Mock localStorage
+const localStorageMock = (() => {
+  let store: Record<string, string> = {};
+  return {
+    getItem: (key: string) => store[key] || null,
+    setItem: (key: string, value: string) => {
+      store[key] = value.toString();
+    },
+    clear: () => {
+      store = {};
+    },
+  };
+})();
+
+Object.defineProperty(window, 'localStorage', {
+  value: localStorageMock,
+});
+
+// Mock Web Audio API
+const mockOscillator = {
+  connect: vi.fn(),
+  start: vi.fn(),
+  stop: vi.fn(),
+  frequency: { value: 0 },
+  type: 'sine' as OscillatorType,
+};
+
+const mockGainNode = {
+  connect: vi.fn(),
+  gain: {
+    setValueAtTime: vi.fn(),
+    linearRampToValueAtTime: vi.fn(),
+    exponentialRampToValueAtTime: vi.fn(),
+  },
+};
+
+const mockAudioContext = {
+  currentTime: 0,
+  createOscillator: vi.fn(() => mockOscillator),
+  createGain: vi.fn(() => mockGainNode),
+  destination: {},
+  close: vi.fn(),
+};
+
+Object.defineProperty(window, 'AudioContext', {
+  value: vi.fn(() => mockAudioContext),
+});
+
 const mockPuzzle = {
   date: '2024-01-15',
   openings: [
@@ -21,6 +69,7 @@ const mockPuzzle = {
 describe('QuoteMatchingPuzzle Component', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    localStorageMock.clear();
     global.fetch = vi.fn();
   });
 

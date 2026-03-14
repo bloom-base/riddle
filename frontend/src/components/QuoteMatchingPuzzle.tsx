@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import './QuoteMatchingPuzzle.css';
+import Confetti from './Confetti';
+import SoundToggle from './SoundToggle';
+import { useCelebrationSound } from '../hooks/useCelebrationSound';
 
 interface Fragment {
   id: string;
@@ -25,8 +28,8 @@ interface QuoteMatchingPuzzleProps {
   startTime?: number;
 }
 
-const QuoteMatchingPuzzle: React.FC<QuoteMatchingPuzzleProps> = ({ 
-  puzzle, 
+const QuoteMatchingPuzzle: React.FC<QuoteMatchingPuzzleProps> = ({
+  puzzle,
   onComplete,
   startTime = 0
 }) => {
@@ -38,6 +41,8 @@ const QuoteMatchingPuzzle: React.FC<QuoteMatchingPuzzleProps> = ({
     results?: Record<string, boolean>;
   } | null>(null);
   const [submitted, setSubmitted] = useState(false);
+  const [showConfetti, setShowConfetti] = useState(false);
+  const { soundEnabled, toggleSound, playCelebrationSound } = useCelebrationSound();
 
   // Get the closing fragment ID that matches a given opening
   const getMatchedClosingId = (openingId: string): string | undefined => {
@@ -143,9 +148,12 @@ const QuoteMatchingPuzzle: React.FC<QuoteMatchingPuzzleProps> = ({
       const completionTime = Date.now() - startTime;
       if (completionTime > 0) {
         onComplete(completionTime);
+        // Trigger celebration effects
+        setShowConfetti(true);
+        playCelebrationSound();
       }
     }
-  }, [submitted, validationResult, startTime, onComplete]);
+  }, [submitted, validationResult, startTime, onComplete, playCelebrationSound]);
 
   // Render match line connecting opening to closing
   const renderMatchLine = (match: Match) => {
@@ -214,6 +222,8 @@ const QuoteMatchingPuzzle: React.FC<QuoteMatchingPuzzleProps> = ({
 
   return (
     <div className="puzzle-container">
+      <Confetti active={showConfetti} duration={2500} />
+      <SoundToggle enabled={soundEnabled} onToggle={toggleSound} />
       <div className="puzzle-content">
         {/* Left Column: Opening Fragments */}
         <div className="column openings">
