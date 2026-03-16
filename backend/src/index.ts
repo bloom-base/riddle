@@ -14,6 +14,7 @@ import {
   hasCompletedToday,
   getUserBestTime
 } from './services/leaderboardService.js';
+import { getDailyRiddle } from './services/riddleService.js';
 
 dotenv.config();
 
@@ -81,19 +82,19 @@ app.get('/api/puzzle/:date', (req: Request, res: Response) => {
 app.post('/api/validate', (req: Request, res: Response) => {
   try {
     const { date, matches } = req.body;
-    
+
     if (!date || !matches || !Array.isArray(matches)) {
       return res.status(400).json({ error: 'Invalid request body' });
     }
-    
+
     const puzzleDate = new Date(date);
     if (isNaN(puzzleDate.getTime())) {
       return res.status(400).json({ error: 'Invalid date format' });
     }
-    
+
     const puzzle = generatePuzzle(puzzleDate);
     const { allCorrect, results } = validateMatches(matches, puzzle);
-    
+
     res.json({
       success: true,
       allCorrect,
@@ -102,6 +103,42 @@ app.post('/api/validate', (req: Request, res: Response) => {
   } catch (error) {
     console.error('Error validating matches:', error);
     res.status(500).json({ error: 'Failed to validate matches' });
+  }
+});
+
+/**
+ * GET /api/riddle
+ * GET /api/riddle/:date
+ * Get today's riddle or riddle for a specific date
+ * Date format: YYYY-MM-DD (optional, defaults to today UTC)
+ */
+app.get('/api/riddle', (req: Request, res: Response) => {
+  try {
+    const riddle = getDailyRiddle();
+    res.json(riddle);
+  } catch (error) {
+    console.error('Error getting riddle:', error);
+    res.status(500).json({ error: 'Failed to get riddle' });
+  }
+});
+
+app.get('/api/riddle/:date', (req: Request, res: Response) => {
+  try {
+    let date = new Date();
+
+    if (req.params.date) {
+      const parsedDate = new Date(req.params.date);
+      if (isNaN(parsedDate.getTime())) {
+        return res.status(400).json({ error: 'Invalid date format. Use YYYY-MM-DD' });
+      }
+      date = parsedDate;
+    }
+
+    const riddle = getDailyRiddle(date);
+    res.json(riddle);
+  } catch (error) {
+    console.error('Error getting riddle:', error);
+    res.status(500).json({ error: 'Failed to get riddle' });
   }
 });
 
@@ -218,6 +255,7 @@ app.use((req: Request, res: Response) => {
 app.listen(PORT, () => {
   console.log(`🎭 Riddle backend server running on http://localhost:${PORT}`);
   console.log(`📚 API Documentation:`);
+  console.log(`   GET  /api/riddle/:date              - Get daily riddle (default: today UTC)`);
   console.log(`   GET  /api/puzzle/:date              - Get puzzle for date (default: today)`);
   console.log(`   POST /api/validate                  - Validate match attempts`);
   console.log(`   POST /api/leaderboard/submit        - Submit completion time`);
