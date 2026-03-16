@@ -15,6 +15,10 @@ const mockPuzzle = {
   correctMatches: [
     { id: 'quote_1', openingId: 'opening_1', closingId: 'closing_1' },
     { id: 'quote_2', openingId: 'opening_2', closingId: 'closing_2' }
+  ],
+  hints: [
+    { id: 'quote_1', hint: 'This is a famous opening line from a Dickens novel about contrasts.' },
+    { id: 'quote_2', hint: 'One of the most famous opening lines in American literature, introducing the narrator.' }
   ]
 };
 

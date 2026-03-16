@@ -12,6 +12,7 @@ export interface Quote {
   openingFragment: string;
   closingFragment: string;
   fullQuote: string;
+  hint: string;
 }
 
 export const QUOTES: Quote[] = [
@@ -21,7 +22,8 @@ export const QUOTES: Quote[] = [
     book: "The Adventures of Huckleberry Finn",
     openingFragment: "You don't know about me",
     closingFragment: "without you have read a book called The Adventures of Tom Sawyer",
-    fullQuote: "You don't know about me without you have read a book called The Adventures of Tom Sawyer"
+    fullQuote: "You don't know about me without you have read a book called The Adventures of Tom Sawyer",
+    hint: "This is the famous opening line from Huck Finn's story, referencing the previous novel."
   },
   {
     id: "fitzgerald_1",
@@ -29,7 +31,8 @@ export const QUOTES: Quote[] = [
     book: "The Great Gatsby",
     openingFragment: "In my younger and more vulnerable years,",
     closingFragment: "my father gave me advice that I've been turning over in my mind ever since.",
-    fullQuote: "In my younger and more vulnerable years, my father gave me advice that I've been turning over in my mind ever since."
+    fullQuote: "In my younger and more vulnerable years, my father gave me advice that I've been turning over in my mind ever since.",
+    hint: "Nick Carraway reflects on his father's wisdom at the beginning of the story."
   },
   {
     id: "fitzgerald_2",
@@ -37,7 +40,8 @@ export const QUOTES: Quote[] = [
     book: "The Great Gatsby",
     openingFragment: "So we beat on,",
     closingFragment: "boats against the current, borne back ceaselessly into the past.",
-    fullQuote: "So we beat on, boats against the current, borne back ceaselessly into the past."
+    fullQuote: "So we beat on, boats against the current, borne back ceaselessly into the past.",
+    hint: "The iconic closing line about the futility of fighting against time and memory."
   },
   {
     id: "steinbeck_1",
@@ -45,7 +49,8 @@ export const QUOTES: Quote[] = [
     book: "The Grapes of Wrath",
     openingFragment: "And the great owners, who must lose their land in an upheaval,",
     closingFragment: "the great owners with access to history, with eyes to read history and to know the great fact: when property accumulates in too few hands, it is taken away.",
-    fullQuote: "And the great owners, who must lose their land in an upheaval, the great owners with access to history, with eyes to read history and to know the great fact: when property accumulates in too few hands, it is taken away."
+    fullQuote: "And the great owners, who must lose their land in an upheaval, the great owners with access to history, with eyes to read history and to know the great fact: when property accumulates in too few hands, it is taken away.",
+    hint: "A warning about wealth inequality and the historical pattern of property redistribution."
   },
   {
     id: "hawthorne_1",
@@ -53,7 +58,8 @@ export const QUOTES: Quote[] = [
     book: "The Scarlet Letter",
     openingFragment: "It is a curious subject of observation and inquiry,",
     closingFragment: "whether hatred and love be not the same thing at bottom.",
-    fullQuote: "It is a curious subject of observation and inquiry, whether hatred and love be not the same thing at bottom."
+    fullQuote: "It is a curious subject of observation and inquiry, whether hatred and love be not the same thing at bottom.",
+    hint: "A philosophical musing about the thin line between two powerful emotions."
   },
   {
     id: "melville_1",
@@ -61,7 +67,8 @@ export const QUOTES: Quote[] = [
     book: "Moby Dick",
     openingFragment: "Call me",
     closingFragment: "Ishmael.",
-    fullQuote: "Call me Ishmael."
+    fullQuote: "Call me Ishmael.",
+    hint: "One of the most famous opening lines in American literature, introducing the narrator."
   },
   {
     id: "thoreau_1",
@@ -69,7 +76,8 @@ export const QUOTES: Quote[] = [
     book: "Walden",
     openingFragment: "Go confidently in the direction of your dreams,",
     closingFragment: "and endeavor to live the life which you have imagined.",
-    fullQuote: "Go confidently in the direction of your dreams, and endeavor to live the life which you have imagined."
+    fullQuote: "Go confidently in the direction of your dreams, and endeavor to live the life which you have imagined.",
+    hint: "Thoreau's inspirational advice about pursuing one's aspirations with courage."
   },
   {
     id: "twain_2",
@@ -77,7 +85,8 @@ export const QUOTES: Quote[] = [
     book: "The Adventures of Tom Sawyer",
     openingFragment: "The secret to getting ahead is",
     closingFragment: "getting started.",
-    fullQuote: "The secret to getting ahead is getting started."
+    fullQuote: "The secret to getting ahead is getting started.",
+    hint: "A simple but powerful piece of advice about taking action and overcoming inertia."
   },
   {
     id: "morrison_1",
@@ -85,7 +94,8 @@ export const QUOTES: Quote[] = [
     book: "Beloved",
     openingFragment: "Freeing yourself was one thing,",
     closingFragment: "claiming ownership of that freed self was another.",
-    fullQuote: "Freeing yourself was one thing, claiming ownership of that freed self was another."
+    fullQuote: "Freeing yourself was one thing, claiming ownership of that freed self was another.",
+    hint: "Morrison explores the difference between physical freedom and true self-determination."
   },
   {
     id: "faulkner_1",
@@ -93,7 +103,8 @@ export const QUOTES: Quote[] = [
     book: "The Sound and the Fury",
     openingFragment: "I have come here to tell you the truth,",
     closingFragment: "the whole truth about what happened that night.",
-    fullQuote: "I have come here to tell you the truth, the whole truth about what happened that night."
+    fullQuote: "I have come here to tell you the truth, the whole truth about what happened that night.",
+    hint: "A dramatic declaration of honesty about revealing what really occurred."
   }
 ];
 

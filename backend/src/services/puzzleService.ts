@@ -16,6 +16,7 @@ export interface Puzzle {
   openings: Array<{ id: string; text: string }>;
   closings: Array<{ id: string; text: string }>;
   correctMatches: PuzzleMatch[];
+  hints: Array<{ id: string; hint: string }>;
 }
 
 export interface ValidationResult {
@@ -62,12 +63,19 @@ export function generatePuzzle(date: Date = new Date()): Puzzle {
     openingId: `opening_${quote.id}`,
     closingId: `closing_${quote.id}`
   }));
-  
+
+  // Create hints mapping
+  const hints = todaysQuotes.map((quote) => ({
+    id: quote.id,
+    hint: quote.hint
+  }));
+
   return {
     date: dateString,
     openings,
     closings: shuffledClosings,
-    correctMatches
+    correctMatches,
+    hints
   };
 }
 

@@ -10,24 +10,27 @@ describe('Puzzle Service', () => {
   describe('generatePuzzle', () => {
     it('should generate a puzzle for today', () => {
       const puzzle = generatePuzzle();
-      
+
       expect(puzzle).toBeDefined();
       expect(puzzle.date).toBeDefined();
       expect(puzzle.openings).toBeDefined();
       expect(puzzle.closings).toBeDefined();
       expect(puzzle.correctMatches).toBeDefined();
+      expect(puzzle.hints).toBeDefined();
       expect(Array.isArray(puzzle.openings)).toBe(true);
       expect(Array.isArray(puzzle.closings)).toBe(true);
       expect(Array.isArray(puzzle.correctMatches)).toBe(true);
+      expect(Array.isArray(puzzle.hints)).toBe(true);
     });
 
     it('should generate 8-10 quote pairs', () => {
       const puzzle = generatePuzzle();
-      
+
       expect(puzzle.openings.length).toBeGreaterThanOrEqual(8);
       expect(puzzle.openings.length).toBeLessThanOrEqual(10);
       expect(puzzle.closings.length).toBe(puzzle.openings.length);
       expect(puzzle.correctMatches.length).toBe(puzzle.openings.length);
+      expect(puzzle.hints.length).toBe(puzzle.openings.length);
     });
 
     it('should have the same puzzle for the same date', () => {
@@ -169,12 +172,35 @@ describe('Puzzle Service', () => {
 
     it('should have correct quote data', () => {
       const quote = getQuoteInfo('melville_1');
-      
+
       expect(quote?.author).toBe('Herman Melville');
       expect(quote?.book).toBe('Moby Dick');
       expect(quote?.openingFragment).toBe('Call me');
       expect(quote?.closingFragment).toBe('Ishmael.');
       expect(quote?.fullQuote).toBe('Call me Ishmael.');
+      expect(quote?.hint).toBeTruthy();
+    });
+  });
+
+  describe('hints', () => {
+    it('should include hints for each quote in generated puzzle', () => {
+      const puzzle = generatePuzzle();
+
+      expect(puzzle.hints.length).toBe(puzzle.openings.length);
+      puzzle.hints.forEach((hint) => {
+        expect(hint.id).toBeTruthy();
+        expect(hint.hint).toBeTruthy();
+        expect(hint.hint.length).toBeGreaterThan(0);
+      });
+    });
+
+    it('should have hints that match quote IDs', () => {
+      const puzzle = generatePuzzle();
+
+      puzzle.hints.forEach((hint) => {
+        const matchingQuote = puzzle.correctMatches.find((m) => m.id === hint.id);
+        expect(matchingQuote).toBeDefined();
+      });
     });
   });
 });
