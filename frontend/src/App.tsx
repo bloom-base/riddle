@@ -3,6 +3,7 @@ import './App.css';
 import QuoteMatchingPuzzle from './components/QuoteMatchingPuzzle';
 import Leaderboard from './components/Leaderboard';
 import CountdownTimer from './components/CountdownTimer';
+import DailyRiddle from './components/DailyRiddle';
 
 interface Puzzle {
   date: string;
@@ -11,8 +12,18 @@ interface Puzzle {
   correctMatches: Array<{ id: string; openingId: string; closingId: string }>;
 }
 
+interface DailyRiddleData {
+  date: string;
+  id: string;
+  question: string;
+  answer: string;
+  difficulty: string;
+  category: string;
+}
+
 function App() {
   const [puzzle, setPuzzle] = useState<Puzzle | null>(null);
+  const [riddle, setRiddle] = useState<DailyRiddleData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [username, setUsername] = useState<string>('');
@@ -20,18 +31,31 @@ function App() {
   const [startTime, setStartTime] = useState<number | null>(null);
 
   useEffect(() => {
-    const fetchPuzzle = async () => {
+    const fetchData = async () => {
       try {
         setLoading(true);
         setError(null);
-        const response = await fetch('/api/puzzle');
-        if (!response.ok) {
+
+        // Fetch both puzzle and riddle in parallel
+        const [puzzleResponse, riddleResponse] = await Promise.all([
+          fetch('/api/puzzle'),
+          fetch('/api/riddle')
+        ]);
+
+        if (!puzzleResponse.ok) {
           throw new Error('Failed to fetch puzzle');
         }
-        const data = await response.json();
-        setPuzzle(data);
+        if (!riddleResponse.ok) {
+          throw new Error('Failed to fetch riddle');
+        }
+
+        const puzzleData = await puzzleResponse.json();
+        const riddleData = await riddleResponse.json();
+
+        setPuzzle(puzzleData);
+        setRiddle(riddleData);
         setStartTime(Date.now());
-        
+
         // Check if username is in localStorage
         const savedUsername = localStorage.getItem('riddleUsername');
         if (savedUsername) {
@@ -42,13 +66,13 @@ function App() {
       } catch (err) {
         const message = err instanceof Error ? err.message : 'Unknown error';
         setError(message);
-        console.error('Error fetching puzzle:', err);
+        console.error('Error fetching data:', err);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchPuzzle();
+    fetchData();
   }, []);
 
   const handleSetUsername = (name: string) => {
@@ -170,8 +194,9 @@ function App() {
         )}
 
         <CountdownTimer />
-        <QuoteMatchingPuzzle 
-          puzzle={puzzle} 
+        {riddle && <DailyRiddle riddle={riddle} />}
+        <QuoteMatchingPuzzle
+          puzzle={puzzle}
           onComplete={handlePuzzleComplete}
           startTime={startTime || 0}
         />
