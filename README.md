@@ -1,6 +1,6 @@
 # Riddle 🎭
 
-![Riddle](https://img.shields.io/badge/riddle-puzzle_game-blue)
+![Version](https://img.shields.io/badge/version-0.1.0-green) ![Riddle](https://img.shields.io/badge/riddle-puzzle_game-blue)
 
 > One puzzle a day keeps the brain sharp. Beautiful, addictive, and endlessly expandable. Every puzzle type you can imagine, from logic grids to cryptic wordplay.
 
