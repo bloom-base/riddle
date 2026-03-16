@@ -24,9 +24,6 @@ FROM node:22-alpine
 
 WORKDIR /app
 
-# Install serve to serve the frontend
-RUN npm install -g serve
-
 # Copy package files from builder
 COPY --from=builder /app/package*.json ./
 COPY --from=builder /app/backend/package*.json ./backend/
@@ -34,8 +31,8 @@ COPY --from=builder /app/backend/dist ./backend/dist
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/frontend/dist ./frontend/dist
 
-# Expose ports
-EXPOSE 3000 3001
+# Expose single port for the backend server (which serves both API and frontend)
+EXPOSE 3001
 
-# Start both frontend and backend
-CMD ["sh", "-c", "serve -s frontend/dist -l 3000 & node backend/dist/index.js"]
+# Start the backend server (it will serve both API and static frontend files)
+CMD ["node", "backend/dist/index.js"]

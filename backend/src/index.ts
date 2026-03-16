@@ -6,6 +6,8 @@
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { generatePuzzle, validateMatches, PuzzleMatch } from './services/puzzleService.js';
 import {
   submitCompletion,
@@ -16,6 +18,9 @@ import {
 } from './services/leaderboardService.js';
 import { getDailyRiddle } from './services/riddleService.js';
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 dotenv.config();
 
 const app = express();
@@ -24,6 +29,11 @@ const PORT = process.env.PORT || 3001;
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+// Serve static frontend files in production
+// The frontend/dist folder should be at ../frontend/dist relative to backend/dist
+const frontendPath = path.join(__dirname, '../../frontend/dist');
+app.use(express.static(frontendPath));
 
 // Request logging middleware
 app.use((req: Request, res: Response, next: NextFunction) => {
@@ -245,10 +255,16 @@ app.get('/api/leaderboard/:date/user/:username', (req: Request, res: Response) =
 });
 
 /**
- * 404 handler
+ * Catch-all handler to serve index.html for client-side routing
+ * Must come after all API routes
  */
-app.use((req: Request, res: Response) => {
-  res.status(404).json({ error: 'Not found' });
+app.get('*', (req: Request, res: Response) => {
+  // If it's an API route that wasn't matched, return 404 JSON
+  if (req.path.startsWith('/api/')) {
+    return res.status(404).json({ error: 'Not found' });
+  }
+  // Otherwise, serve the frontend index.html
+  res.sendFile(path.join(frontendPath, 'index.html'));
 });
 
 // Start server
