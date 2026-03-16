@@ -11,6 +11,7 @@ interface Puzzle {
   openings: Fragment[];
   closings: Fragment[];
   correctMatches: Array<{ id: string; openingId: string; closingId: string }>;
+  hints: Array<{ id: string; hint: string }>;
 }
 
 interface Match {
@@ -38,6 +39,7 @@ const QuoteMatchingPuzzle: React.FC<QuoteMatchingPuzzleProps> = ({
     results?: Record<string, boolean>;
   } | null>(null);
   const [submitted, setSubmitted] = useState(false);
+  const [shownHints, setShownHints] = useState<Set<string>>(new Set());
 
   // Get the closing fragment ID that matches a given opening
   const getMatchedClosingId = (openingId: string): string | undefined => {
@@ -101,6 +103,16 @@ const QuoteMatchingPuzzle: React.FC<QuoteMatchingPuzzleProps> = ({
   // Remove a match
   const handleRemoveMatch = (openingId: string) => {
     setMatches(matches.filter((m) => m.openingId !== openingId));
+  };
+
+  // Show hint for a specific quote
+  const handleShowHint = (quoteId: string) => {
+    setShownHints(new Set([...shownHints, quoteId]));
+  };
+
+  // Get hint text for a quote ID
+  const getHintForQuote = (quoteId: string): string | undefined => {
+    return puzzle.hints.find((h) => h.id === quoteId)?.hint;
   };
 
   // Submit answers for validation
@@ -285,6 +297,40 @@ const QuoteMatchingPuzzle: React.FC<QuoteMatchingPuzzleProps> = ({
             {Object.values(validationResult.results || {}).filter((v) => v).length}{' '}
             out of {matches.length} matches are correct.
           </p>
+
+          {/* Show hints for incorrect matches */}
+          <div className="hints-section">
+            {matches.map((match) => {
+              const isCorrect = puzzle.correctMatches.some(
+                (cm) => cm.openingId === match.openingId && cm.closingId === match.closingId
+              );
+              const quoteId = match.id;
+              const hintText = getHintForQuote(quoteId);
+              const hasShownHint = shownHints.has(quoteId);
+
+              // Only show hint UI for incorrect matches
+              if (isCorrect) return null;
+
+              return (
+                <div key={quoteId} className="hint-container">
+                  {!hasShownHint ? (
+                    <button
+                      className="btn btn-hint"
+                      onClick={() => handleShowHint(quoteId)}
+                    >
+                      💡 Get Hint
+                    </button>
+                  ) : (
+                    <div className="hint-callout">
+                      <div className="hint-icon">💡</div>
+                      <div className="hint-text">{hintText}</div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
           <button
             className="btn btn-secondary"
             onClick={() => {
