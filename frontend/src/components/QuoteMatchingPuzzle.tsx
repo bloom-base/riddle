@@ -39,12 +39,16 @@ const Confetti: React.FC = () => {
 
     // Cleanup after animation completes
     const cleanup = setTimeout(() => {
-      confettiContainer.remove();
+      if (confettiContainer.parentNode) {
+        confettiContainer.remove();
+      }
     }, 3500); // Clean up after 3.5 seconds
 
     return () => {
       clearTimeout(cleanup);
-      confettiContainer.remove();
+      if (confettiContainer.parentNode) {
+        confettiContainer.remove();
+      }
     };
   }, []);
 
