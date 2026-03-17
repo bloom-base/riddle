@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './QuoteMatchingPuzzle.css';
 
 interface Fragment {
@@ -40,6 +40,8 @@ const QuoteMatchingPuzzle: React.FC<QuoteMatchingPuzzleProps> = ({
   } | null>(null);
   const [submitted, setSubmitted] = useState(false);
   const [shownHints, setShownHints] = useState<Set<string>>(new Set());
+  const [showConfetti, setShowConfetti] = useState(false);
+  const confettiContainerRef = useRef<HTMLDivElement>(null);
 
   // Get the closing fragment ID that matches a given opening
   const getMatchedClosingId = (openingId: string): string | undefined => {
@@ -159,6 +161,55 @@ const QuoteMatchingPuzzle: React.FC<QuoteMatchingPuzzleProps> = ({
     }
   }, [submitted, validationResult, startTime, onComplete]);
 
+  // Trigger confetti animation on completion
+  useEffect(() => {
+    if (submitted && validationResult?.allCorrect) {
+      setShowConfetti(true);
+      createConfetti();
+
+      // Clean up confetti after 3 seconds
+      const cleanup = setTimeout(() => {
+        setShowConfetti(false);
+        if (confettiContainerRef.current) {
+          confettiContainerRef.current.innerHTML = '';
+        }
+      }, 3000);
+
+      return () => clearTimeout(cleanup);
+    }
+  }, [submitted, validationResult]);
+
+  // Create confetti pieces
+  const createConfetti = () => {
+    if (!confettiContainerRef.current) return;
+
+    const confettiCount = 40;
+    const colors = ['#3498db', '#e74c3c', '#f39c12', '#2ecc71', '#9b59b6', '#1abc9c', '#e67e22', '#34495e'];
+
+    for (let i = 0; i < confettiCount; i++) {
+      const confetti = document.createElement('div');
+      confetti.className = 'confetti-piece';
+
+      // Random properties for each confetti piece
+      const left = Math.random() * 100;
+      const animationDelay = Math.random() * 0.5;
+      const animationDuration = 2 + Math.random() * 1;
+      const rotation = Math.random() * 360;
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      const size = 8 + Math.random() * 6;
+
+      confetti.style.left = `${left}%`;
+      confetti.style.backgroundColor = color;
+      confetti.style.width = `${size}px`;
+      confetti.style.height = `${size}px`;
+      confetti.style.animationDelay = `${animationDelay}s`;
+      confetti.style.animationDuration = `${animationDuration}s`;
+      confetti.style.transform = `rotate(${rotation}deg)`;
+
+      confettiContainerRef.current.appendChild(confetti);
+    }
+  };
+
   // Render match line connecting opening to closing
   const renderMatchLine = (match: Match) => {
     const opening = puzzle.openings.find((o) => o.id === match.openingId);
@@ -202,6 +253,7 @@ const QuoteMatchingPuzzle: React.FC<QuoteMatchingPuzzleProps> = ({
 
     return (
       <div className="puzzle-container">
+        {showConfetti && <div ref={confettiContainerRef} className="confetti-container" />}
         <div className="completion-screen">
           <div className="celebration">🎉</div>
           <h2>Congratulations!</h2>
