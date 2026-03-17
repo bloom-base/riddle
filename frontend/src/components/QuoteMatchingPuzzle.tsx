@@ -1,6 +1,60 @@
 import React, { useState, useEffect } from 'react';
 import './QuoteMatchingPuzzle.css';
 
+// Confetti Component
+const Confetti: React.FC = () => {
+  useEffect(() => {
+    const confettiContainer = document.createElement('div');
+    confettiContainer.className = 'confetti-container';
+    document.body.appendChild(confettiContainer);
+
+    const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8', '#F7DC6F', '#BB8FCE', '#85C1E2', '#F8B195', '#C06C84'];
+    const confettiCount = Math.floor(Math.random() * 21) + 30; // 30-50 pieces
+
+    // Create confetti pieces
+    for (let i = 0; i < confettiCount; i++) {
+      const confetti = document.createElement('div');
+      confetti.className = 'confetti-piece';
+
+      // Random properties
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      const left = Math.random() * 100;
+      const animationDelay = Math.random() * 0.5;
+      const animationDuration = 2 + Math.random() * 1; // 2-3 seconds
+      const rotation = Math.random() * 360;
+      const size = Math.random() * 8 + 6; // 6-14px
+
+      confetti.style.cssText = `
+        left: ${left}%;
+        background-color: ${color};
+        animation-delay: ${animationDelay}s;
+        animation-duration: ${animationDuration}s;
+        transform: rotate(${rotation}deg);
+        width: ${size}px;
+        height: ${size}px;
+      `;
+
+      confettiContainer.appendChild(confetti);
+    }
+
+    // Cleanup after animation completes
+    const cleanup = setTimeout(() => {
+      if (confettiContainer.parentNode) {
+        confettiContainer.remove();
+      }
+    }, 3500); // Clean up after 3.5 seconds
+
+    return () => {
+      clearTimeout(cleanup);
+      if (confettiContainer.parentNode) {
+        confettiContainer.remove();
+      }
+    };
+  }, []);
+
+  return null;
+};
+
 interface Fragment {
   id: string;
   text: string;
@@ -202,6 +256,7 @@ const QuoteMatchingPuzzle: React.FC<QuoteMatchingPuzzleProps> = ({
 
     return (
       <div className="puzzle-container">
+        <Confetti />
         <div className="completion-screen">
           <div className="celebration">🎉</div>
           <h2>Congratulations!</h2>
