@@ -1,0 +1,90 @@
+.streak-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.6rem 0.9rem;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 10px;
+  min-width: 72px;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+.streak-badge.has-streak {
+  background: rgba(255, 160, 30, 0.2);
+  border-color: rgba(255, 160, 30, 0.4);
+}
+
+.streak-badge.solved-today {
+  background: rgba(39, 174, 96, 0.25);
+  border-color: rgba(39, 174, 96, 0.5);
+  box-shadow: 0 0 12px rgba(39, 174, 96, 0.2);
+}
+
+.streak-main {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  line-height: 1;
+}
+
+.streak-flame {
+  font-size: 1.3rem;
+}
+
+.streak-count {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: white;
+  line-height: 1;
+}
+
+.streak-label {
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.8);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 600;
+}
+
+.solved-today-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #a8f0c6;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.streak-best {
+  font-size: 0.65rem;
+  color: rgba(255, 255, 255, 0.6);
+  white-space: nowrap;
+}
+
+/* Pulse animation on completion */
+@keyframes streakPop {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.15); }
+  70%  { transform: scale(0.95); }
+  100% { transform: scale(1); }
+}
+
+.streak-badge.solved-today {
+  animation: streakPop 0.5s ease forwards;
+}
+
+@media (max-width: 768px) {
+  .streak-badge {
+    min-width: 60px;
+    padding: 0.5rem 0.7rem;
+  }
+
+  .streak-count {
+    font-size: 1.2rem;
+  }
+
+  .streak-flame {
+    font-size: 1.1rem;
+  }
+}

@@ -56,6 +56,13 @@ body {
   opacity: 0.95;
 }
 
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
+}
+
 .username-display {
   display: flex;
   align-items: center;
@@ -242,8 +249,13 @@ body {
     gap: 1rem;
   }
 
-  .username-display {
+  .header-right {
     width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .username-display {
     justify-content: center;
   }
 

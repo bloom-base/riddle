@@ -4,12 +4,15 @@ import QuoteMatchingPuzzle from './components/QuoteMatchingPuzzle';
 import Leaderboard from './components/Leaderboard';
 import CountdownTimer from './components/CountdownTimer';
 import DailyRiddle from './components/DailyRiddle';
+import StreakBadge from './components/StreakBadge';
+import { useStreak } from './hooks/useStreak';
 
 interface Puzzle {
   date: string;
   openings: Array<{ id: string; text: string }>;
   closings: Array<{ id: string; text: string }>;
   correctMatches: Array<{ id: string; openingId: string; closingId: string }>;
+  hints: Array<{ id: string; hint: string }>;
 }
 
 interface DailyRiddleData {
@@ -29,6 +32,8 @@ function App() {
   const [username, setUsername] = useState<string>('');
   const [showUsernamePrompt, setShowUsernamePrompt] = useState(false);
   const [startTime, setStartTime] = useState<number | null>(null);
+
+  const { currentStreak, longestStreak, hasSolvedDate, recordSolve } = useStreak();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -87,6 +92,9 @@ function App() {
   const handlePuzzleComplete = async (completionTimeMs: number) => {
     if (!puzzle || !username) return;
 
+    // Record the solve in persistent history and update streak
+    recordSolve(puzzle.date);
+
     try {
       await fetch('/api/leaderboard/submit', {
         method: 'POST',
@@ -144,18 +152,27 @@ function App() {
             <h1>🎭 Riddle</h1>
             <p>One puzzle a day keeps the brain sharp</p>
           </div>
-          {username && (
-            <div className="username-display">
-              👤 {username}
-              <button 
-                className="username-change"
-                onClick={() => setShowUsernamePrompt(true)}
-                title="Change username"
-              >
-                ⚙️
-              </button>
-            </div>
-          )}
+          <div className="header-right">
+            {puzzle && (
+              <StreakBadge
+                currentStreak={currentStreak}
+                longestStreak={longestStreak}
+                solvedToday={hasSolvedDate(puzzle.date)}
+              />
+            )}
+            {username && (
+              <div className="username-display">
+                👤 {username}
+                <button
+                  className="username-change"
+                  onClick={() => setShowUsernamePrompt(true)}
+                  title="Change username"
+                >
+                  ⚙️
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </header>
       
