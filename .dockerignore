@@ -45,3 +45,6 @@ SUMMARY.md
 
 # CI/CD
 .github
+
+# Claude/Bloom session files
+.claude
