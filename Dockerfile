@@ -4,15 +4,22 @@ FROM node:22-alpine as builder
 
 WORKDIR /app
 
-# Copy package files
+# Copy root package files
 COPY package*.json ./
+
+# Install backend dependencies separately (avoids workspace hoisting OOM issues)
 COPY backend/package*.json ./backend/
+WORKDIR /app/backend
+RUN npm install --no-audit --prefer-offline
+
+# Install frontend dependencies separately
+WORKDIR /app
 COPY frontend/package*.json ./frontend/
+WORKDIR /app/frontend
+RUN npm install --no-audit --prefer-offline
 
-# Install dependencies
-RUN npm ci
-
-# Copy source code
+# Back to root, copy source code, and build
+WORKDIR /app
 COPY backend ./backend
 COPY frontend ./frontend
 
@@ -24,11 +31,12 @@ FROM node:22-alpine
 
 WORKDIR /app
 
-# Copy package files from builder
-COPY --from=builder /app/package*.json ./
+# Copy backend package files, built artifacts, and its own node_modules
 COPY --from=builder /app/backend/package*.json ./backend/
 COPY --from=builder /app/backend/dist ./backend/dist
-COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/backend/node_modules ./backend/node_modules
+
+# Copy frontend built artifacts (served as static files by the backend)
 COPY --from=builder /app/frontend/dist ./frontend/dist
 
 # Expose single port for the backend server (which serves both API and frontend)

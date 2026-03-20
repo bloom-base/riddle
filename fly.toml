@@ -4,7 +4,6 @@ primary_region = "iad"
 
 [build]
   dockerfile = "Dockerfile"
-  remote = false
 
 [env]
   PORT = "3001"
