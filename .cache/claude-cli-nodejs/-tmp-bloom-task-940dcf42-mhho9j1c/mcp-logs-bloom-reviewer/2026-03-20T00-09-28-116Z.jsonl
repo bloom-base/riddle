@@ -1,0 +1,2 @@
+{"debug":"Calling MCP tool: approve_and_merge","timestamp":"2026-03-20T00:09:47.200Z","sessionId":"c7436d8c-0fed-4ed6-aa21-b39335150358","cwd":"/tmp/bloom-task-940dcf42-mhho9j1c"}
+{"debug":"Tool 'approve_and_merge' completed successfully in 2s","timestamp":"2026-03-20T00:09:49.609Z","sessionId":"c7436d8c-0fed-4ed6-aa21-b39335150358","cwd":"/tmp/bloom-task-940dcf42-mhho9j1c"}
