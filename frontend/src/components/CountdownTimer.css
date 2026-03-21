@@ -1,70 +1,122 @@
+/* ───────────────────────────────────────────
+   CountdownTimer — default (standalone card)
+   ─────────────────────────────────────────── */
 .countdown-timer {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1rem;
-  padding: 1.5rem;
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-  border-radius: 8px;
-  color: white;
-  margin: 1rem 0;
-  box-shadow: 0 5px 15px rgba(245, 87, 108, 0.3);
+  gap: 0.75rem;
+  padding: 1.25rem 1.75rem;
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.18) 0%, rgba(124, 58, 237, 0.08) 100%);
+  border: 1px solid rgba(139, 92, 246, 0.28);
+  border-radius: 12px;
+  color: #f0eeff;
+  box-shadow: 0 0 32px rgba(139, 92, 246, 0.12);
 }
 
 .countdown-label {
-  font-size: 0.95rem;
+  font-size: 0.7rem;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.12em;
   font-weight: 600;
-  opacity: 0.95;
+  color: #c4b5fd;
+  opacity: 0.9;
 }
 
 .countdown-display {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  font-family: 'Courier New', monospace;
+  gap: 0.4rem;
+  font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
 }
 
 .countdown-unit {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.25rem;
+  gap: 0.2rem;
 }
 
 .countdown-value {
-  font-size: 1.8rem;
+  font-size: 2rem;
   font-weight: 700;
   line-height: 1;
+  letter-spacing: -0.02em;
+  color: #f0eeff;
 }
 
 .countdown-unit-label {
-  font-size: 0.7rem;
+  font-size: 0.62rem;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  opacity: 0.8;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  letter-spacing: 0.06em;
+  color: rgba(196, 181, 253, 0.65);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  font-weight: 500;
 }
 
 .countdown-separator {
-  font-size: 1.5rem;
+  font-size: 1.6rem;
   font-weight: 700;
-  margin: 0 0.25rem;
+  color: rgba(196, 181, 253, 0.45);
+  margin: 0 0.1rem;
+  line-height: 1;
+  /* align with the number, not the label */
+  align-self: flex-start;
+  padding-top: 0.05em;
 }
 
-/* OBS Overlay variant - minimal design */
+/* ───────────────────────────────────────────
+   Inline variant — used inside .puzzle-hero
+   ─────────────────────────────────────────── */
+.puzzle-hero .countdown-timer {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+  border-radius: 0;
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.puzzle-hero .countdown-label {
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  white-space: nowrap;
+}
+
+.puzzle-hero .countdown-display {
+  gap: 0.3rem;
+}
+
+.puzzle-hero .countdown-value {
+  font-size: 1.45rem;
+}
+
+.puzzle-hero .countdown-unit-label {
+  font-size: 0.58rem;
+}
+
+.puzzle-hero .countdown-separator {
+  font-size: 1.2rem;
+  padding-top: 0.04em;
+}
+
+/* ───────────────────────────────────────────
+   OBS Overlay variant
+   ─────────────────────────────────────────── */
 .countdown-timer.obs-overlay {
-  background: rgba(0, 0, 0, 0.7);
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  margin: 0;
-  padding: 1rem;
+  background: rgba(0, 0, 0, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 4px;
+  margin: 0;
+  padding: 0.875rem 1rem;
+  box-shadow: none;
 }
 
 .countdown-timer.obs-overlay .countdown-label {
-  font-size: 0.85rem;
-  margin-bottom: 0.25rem;
+  font-size: 0.8rem;
 }
 
 .countdown-timer.obs-overlay .countdown-display {
@@ -72,49 +124,57 @@
 }
 
 .countdown-timer.obs-overlay .countdown-value {
-  font-size: 1.5rem;
+  font-size: 1.4rem;
 }
 
 .countdown-timer.obs-overlay .countdown-separator {
-  font-size: 1.3rem;
+  font-size: 1.2rem;
 }
 
-/* Responsive design */
+/* ───────────────────────────────────────────
+   Responsive
+   ─────────────────────────────────────────── */
 @media (max-width: 768px) {
   .countdown-timer {
-    padding: 1rem;
-    gap: 0.75rem;
+    padding: 1rem 1.25rem;
+    gap: 0.6rem;
   }
 
   .countdown-value {
-    font-size: 1.5rem;
+    font-size: 1.65rem;
   }
 
   .countdown-separator {
     font-size: 1.3rem;
+  }
+
+  /* In hero, stack vertically on small screens */
+  .puzzle-hero .countdown-timer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.35rem;
   }
 }
 
 @media (max-width: 480px) {
   .countdown-timer {
-    padding: 0.75rem;
+    padding: 0.875rem 1rem;
     gap: 0.5rem;
   }
 
   .countdown-label {
-    font-size: 0.85rem;
+    font-size: 0.65rem;
   }
 
   .countdown-value {
-    font-size: 1.3rem;
+    font-size: 1.4rem;
   }
 
   .countdown-unit-label {
-    font-size: 0.65rem;
+    font-size: 0.58rem;
   }
 
   .countdown-separator {
     font-size: 1.1rem;
-    margin: 0;
   }
 }
