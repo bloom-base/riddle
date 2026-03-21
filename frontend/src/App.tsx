@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import './App.css';
 import QuoteMatchingPuzzle from './components/QuoteMatchingPuzzle';
 import Leaderboard from './components/Leaderboard';
@@ -24,6 +24,17 @@ interface DailyRiddleData {
   category: string;
 }
 
+function formatPuzzleDate(dateStr: string): string {
+  // Append noon time to avoid timezone edge-cases shifting the date
+  const date = new Date(dateStr + 'T12:00:00');
+  return date.toLocaleDateString('en-US', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+}
+
 function App() {
   const [puzzle, setPuzzle] = useState<Puzzle | null>(null);
   const [riddle, setRiddle] = useState<DailyRiddleData | null>(null);
@@ -32,6 +43,7 @@ function App() {
   const [username, setUsername] = useState<string>('');
   const [showUsernamePrompt, setShowUsernamePrompt] = useState(false);
   const [startTime, setStartTime] = useState<number | null>(null);
+  const usernameInputRef = useRef<HTMLInputElement>(null);
 
   const { currentStreak, longestStreak, hasSolvedDate, recordSolve } = useStreak();
 
@@ -41,18 +53,13 @@ function App() {
         setLoading(true);
         setError(null);
 
-        // Fetch both puzzle and riddle in parallel
         const [puzzleResponse, riddleResponse] = await Promise.all([
           fetch('/api/puzzle'),
-          fetch('/api/riddle')
+          fetch('/api/riddle'),
         ]);
 
-        if (!puzzleResponse.ok) {
-          throw new Error('Failed to fetch puzzle');
-        }
-        if (!riddleResponse.ok) {
-          throw new Error('Failed to fetch riddle');
-        }
+        if (!puzzleResponse.ok) throw new Error('Failed to fetch puzzle');
+        if (!riddleResponse.ok) throw new Error('Failed to fetch riddle');
 
         const puzzleData = await puzzleResponse.json();
         const riddleData = await riddleResponse.json();
@@ -61,7 +68,6 @@ function App() {
         setRiddle(riddleData);
         setStartTime(Date.now());
 
-        // Check if username is in localStorage
         const savedUsername = localStorage.getItem('riddleUsername');
         if (savedUsername) {
           setUsername(savedUsername);
@@ -80,6 +86,13 @@ function App() {
     fetchData();
   }, []);
 
+  // Focus the username input when the modal opens
+  useEffect(() => {
+    if (showUsernamePrompt) {
+      setTimeout(() => usernameInputRef.current?.focus(), 50);
+    }
+  }, [showUsernamePrompt]);
+
   const handleSetUsername = (name: string) => {
     const trimmed = name.trim();
     if (trimmed.length > 0 && trimmed.length <= 50) {
@@ -89,10 +102,13 @@ function App() {
     }
   };
 
+  const handleSkipUsername = () => {
+    handleSetUsername('Anonymous');
+  };
+
   const handlePuzzleComplete = async (completionTimeMs: number) => {
     if (!puzzle || !username) return;
 
-    // Record the solve in persistent history and update streak
     recordSolve(puzzle.date);
 
     try {
@@ -102,127 +118,150 @@ function App() {
         body: JSON.stringify({
           date: puzzle.date,
           username,
-          completionTime: completionTimeMs
-        })
+          completionTime: completionTimeMs,
+        }),
       });
-    } catch (error) {
-      console.error('Error submitting to leaderboard:', error);
+    } catch (err) {
+      console.error('Error submitting to leaderboard:', err);
     }
   };
 
+  /* ── Loading ── */
   if (loading) {
     return (
-      <div className="app">
-        <div className="container">
-          <h1>🎭 Riddle</h1>
-          <div className="loading">Loading today's puzzle...</div>
+      <div className="loading-screen">
+        <span className="loading-icon">🎭</span>
+        <p className="loading-text">Loading today's puzzle…</p>
+        <div className="loading-dots">
+          <span className="loading-dot" />
+          <span className="loading-dot" />
+          <span className="loading-dot" />
         </div>
       </div>
     );
   }
 
-  if (error) {
+  /* ── Error ── */
+  if (error || !puzzle) {
     return (
-      <div className="app">
-        <div className="container">
-          <h1>🎭 Riddle</h1>
-          <div className="error">Error: {error}</div>
-          <p>Unable to load the puzzle. Please try again later.</p>
-        </div>
+      <div className="error-screen">
+        <span className="error-icon">😵</span>
+        <p className="error-title">{error ? 'Something went wrong' : 'No puzzle today'}</p>
+        <p className="error-body">
+          {error
+            ? `${error}. Please refresh the page or try again later.`
+            : 'No puzzle is available right now. Check back soon!'}
+        </p>
       </div>
     );
   }
 
-  if (!puzzle) {
-    return (
-      <div className="app">
-        <div className="container">
-          <h1>🎭 Riddle</h1>
-          <div className="error">No puzzle available</div>
-        </div>
-      </div>
-    );
-  }
-
+  /* ── Full app ── */
   return (
     <div className="app">
-      <header className="header">
-        <div className="header-content">
-          <div>
-            <h1>🎭 Riddle</h1>
-            <p>One puzzle a day keeps the brain sharp</p>
+
+      {/* ── Username Modal ── */}
+      {showUsernamePrompt && (
+        <div className="username-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+          <div className="username-modal">
+            <span className="modal-emoji" aria-hidden="true">🎭</span>
+            <h2 className="modal-title" id="modal-title">Join the Challenge!</h2>
+            <p className="modal-subtitle">
+              Enter your name to compete on the daily leaderboard and track your streak.
+            </p>
+            <input
+              ref={usernameInputRef}
+              className="modal-input"
+              type="text"
+              maxLength={50}
+              placeholder="Your name…"
+              defaultValue={username}
+              aria-label="Username"
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  handleSetUsername((e.target as HTMLInputElement).value);
+                }
+              }}
+            />
+            <button
+              className="modal-btn-primary"
+              onClick={() =>
+                handleSetUsername(usernameInputRef.current?.value ?? '')
+              }
+            >
+              Start Playing →
+            </button>
+            <button className="modal-btn-secondary" onClick={handleSkipUsername}>
+              Play anonymously
+            </button>
           </div>
+        </div>
+      )}
+
+      {/* ── Header ── */}
+      <header className="site-header">
+        <div className="header-inner">
+          <div className="brand">
+            <span className="brand-icon" aria-hidden="true">🎭</span>
+            <div className="brand-text">
+              <h1 className="brand-name">Riddle</h1>
+              <p className="brand-tagline">One puzzle a day</p>
+            </div>
+          </div>
+
           <div className="header-right">
-            {puzzle && (
-              <StreakBadge
-                currentStreak={currentStreak}
-                longestStreak={longestStreak}
-                solvedToday={hasSolvedDate(puzzle.date)}
-              />
-            )}
+            <StreakBadge
+              currentStreak={currentStreak}
+              longestStreak={longestStreak}
+              solvedToday={hasSolvedDate(puzzle.date)}
+            />
             {username && (
-              <div className="username-display">
-                👤 {username}
-                <button
-                  className="username-change"
-                  onClick={() => setShowUsernamePrompt(true)}
-                  title="Change username"
-                >
-                  ⚙️
-                </button>
-              </div>
+              <button
+                className="user-pill"
+                onClick={() => setShowUsernamePrompt(true)}
+                title="Change username"
+                aria-label={`Signed in as ${username}. Click to change.`}
+              >
+                <span className="user-pill-icon" aria-hidden="true">👤</span>
+                <span className="user-pill-name">{username}</span>
+                <span className="user-pill-gear" aria-hidden="true">⚙️</span>
+              </button>
             )}
           </div>
         </div>
       </header>
-      
-      <main className="container">
-        {showUsernamePrompt && (
-          <div className="username-prompt">
-            <div className="username-prompt-content">
-              <h2>Join the Challenge!</h2>
-              <p>Enter your name to compete on the leaderboard:</p>
-              <input
-                type="text"
-                maxLength={50}
-                placeholder="Your name"
-                defaultValue={username}
-                onKeyPress={(e) => {
-                  if (e.key === 'Enter') {
-                    handleSetUsername((e.target as HTMLInputElement).value);
-                  }
-                }}
-              />
-              <button 
-                onClick={(e) => handleSetUsername((e.currentTarget.previousElementSibling as HTMLInputElement).value)}
-              >
-                Start Playing
-              </button>
-              <button 
-                className="skip-btn"
-                onClick={() => {
-                  handleSetUsername('Anonymous');
-                }}
-              >
-                Skip
-              </button>
-            </div>
-          </div>
-        )}
 
-        <CountdownTimer />
+      {/* ── Date hero banner ── */}
+      <div className="puzzle-hero" aria-label="Today's puzzle info">
+        <div className="hero-inner">
+          <div className="hero-date-block">
+            <span className="hero-eyebrow">Today's puzzle</span>
+            <span className="hero-date">{formatPuzzleDate(puzzle.date)}</span>
+          </div>
+          <CountdownTimer />
+        </div>
+      </div>
+
+      {/* ── Main content ── */}
+      <main className="main-content">
         {riddle && <DailyRiddle riddle={riddle} />}
         <QuoteMatchingPuzzle
           puzzle={puzzle}
           onComplete={handlePuzzleComplete}
-          startTime={startTime || 0}
+          startTime={startTime ?? 0}
         />
         <Leaderboard date={puzzle.date} />
       </main>
 
-      <footer className="footer">
-        <p>Match the opening and closing fragments to complete famous U.S. literature quotes</p>
-        <p className="footer-subtext">Stream it live! Perfect for Twitch communities</p>
+      {/* ── Footer ── */}
+      <footer className="site-footer">
+        <div className="footer-inner">
+          <span className="footer-brand">🎭 Riddle</span>
+          <span className="footer-sep">·</span>
+          <span>Match fragments from famous U.S. literature quotes</span>
+          <span className="footer-sep">·</span>
+          <span>Perfect for Twitch communities</span>
+        </div>
       </footer>
     </div>
   );
