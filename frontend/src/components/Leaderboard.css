@@ -1,10 +1,10 @@
 .leaderboard-container {
   margin: 2rem 0;
   padding: 2rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 12px;
+  background: linear-gradient(135deg, var(--accent-hover) 0%, var(--accent) 100%);
+  border-radius: var(--radius);
   color: white;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-lg);
 }
 
 .leaderboard-container h2 {
@@ -22,11 +22,11 @@
 }
 
 .stat-card {
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius-sm);
   padding: 1.5rem;
   text-align: center;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.18);
   backdrop-filter: blur(10px);
 }
 
@@ -34,7 +34,7 @@
   font-size: 0.9rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  opacity: 0.9;
+  opacity: 0.85;
   margin-bottom: 0.5rem;
 }
 
@@ -60,15 +60,15 @@
   grid-template-columns: 50px 1fr auto;
   gap: 1rem;
   align-items: center;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.08);
   padding: 1rem;
-  border-radius: 8px;
-  border-left: 4px solid rgba(255, 255, 255, 0.3);
+  border-radius: var(--radius-sm);
+  border-left: 4px solid rgba(255, 255, 255, 0.25);
   transition: all 0.3s ease;
 }
 
 .leaderboard-item:hover {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.14);
   transform: translateX(4px);
 }
 
@@ -115,7 +115,7 @@
 }
 
 .error {
-  color: #ff6b6b;
+  color: var(--error);
 }
 
 /* Responsive design */

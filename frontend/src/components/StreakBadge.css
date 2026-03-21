@@ -4,22 +4,22 @@
   align-items: center;
   gap: 0.3rem;
   padding: 0.6rem 0.9rem;
-  background: rgba(255, 255, 255, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-strong);
   border-radius: 10px;
   min-width: 72px;
-  transition: background 0.3s ease, box-shadow 0.3s ease;
+  transition: background var(--t), box-shadow var(--t);
 }
 
 .streak-badge.has-streak {
-  background: rgba(255, 160, 30, 0.2);
-  border-color: rgba(255, 160, 30, 0.4);
+  background: var(--warm-dim);
+  border-color: rgba(245, 158, 11, 0.4);
 }
 
 .streak-badge.solved-today {
-  background: rgba(39, 174, 96, 0.25);
-  border-color: rgba(39, 174, 96, 0.5);
-  box-shadow: 0 0 12px rgba(39, 174, 96, 0.2);
+  background: rgba(16, 185, 129, 0.15);
+  border-color: rgba(16, 185, 129, 0.4);
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.2);
 }
 
 .streak-main {
@@ -36,13 +36,13 @@
 .streak-count {
   font-size: 1.4rem;
   font-weight: 800;
-  color: white;
+  color: var(--text);
   line-height: 1;
 }
 
 .streak-label {
   font-size: 0.7rem;
-  color: rgba(255, 255, 255, 0.8);
+  color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.04em;
   font-weight: 600;
@@ -51,14 +51,14 @@
 .solved-today-badge {
   font-size: 0.7rem;
   font-weight: 700;
-  color: #a8f0c6;
+  color: var(--success);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 
 .streak-best {
   font-size: 0.65rem;
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--text-faint);
   white-space: nowrap;
 }
 

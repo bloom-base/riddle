@@ -1,9 +1,9 @@
 .daily-riddle {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 16px;
+  background: linear-gradient(135deg, var(--accent-hover) 0%, var(--accent) 100%);
+  border-radius: var(--radius-lg);
   padding: 2rem;
   margin-bottom: 2rem;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-lg);
   color: white;
   animation: fadeIn 0.5s ease-in;
 }
@@ -47,7 +47,7 @@
 }
 
 .category {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.18);
   padding: 0.3rem 0.8rem;
   border-radius: 20px;
   font-size: 0.85rem;
@@ -63,11 +63,11 @@
 }
 
 .riddle-question {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.12);
   padding: 1.5rem;
-  border-radius: 12px;
+  border-radius: var(--radius);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.18);
 }
 
 .riddle-question p {
@@ -79,11 +79,11 @@
 }
 
 .reveal-button {
-  background: white;
-  color: #667eea;
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--accent-hover);
   border: none;
   padding: 1rem 2rem;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   font-size: 1.1rem;
   font-weight: 700;
   cursor: pointer;
@@ -93,7 +93,7 @@
 }
 
 .reveal-button:hover {
-  background: #f0f0f0;
+  background: white;
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
 }
@@ -105,10 +105,10 @@
 
 .riddle-answer {
   padding: 1.5rem;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.18);
   backdrop-filter: blur(10px);
-  border: 2px solid rgba(255, 255, 255, 0.3);
+  border: 2px solid rgba(255, 255, 255, 0.28);
 }
 
 .riddle-answer.revealed {
@@ -132,14 +132,14 @@
   text-transform: uppercase;
   letter-spacing: 1px;
   margin-bottom: 0.5rem;
-  opacity: 0.9;
+  opacity: 0.85;
 }
 
 .answer-text {
   font-size: 1.3rem;
   font-weight: 700;
   color: white;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
 }
 
 /* Mobile responsive */
@@ -164,12 +164,5 @@
 
   .answer-text {
     font-size: 1.1rem;
-  }
-}
-
-/* Dark mode support (optional) */
-@media (prefers-color-scheme: dark) {
-  .daily-riddle {
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
   }
 }
