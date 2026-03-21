@@ -8,9 +8,9 @@
   gap: 0.75rem;
   padding: 1.25rem 1.75rem;
   background: linear-gradient(135deg, rgba(139, 92, 246, 0.18) 0%, rgba(124, 58, 237, 0.08) 100%);
-  border: 1px solid rgba(139, 92, 246, 0.28);
-  border-radius: 12px;
-  color: #f0eeff;
+  border: 1px solid var(--border-accent);
+  border-radius: var(--radius);
+  color: var(--text);
   box-shadow: 0 0 32px rgba(139, 92, 246, 0.12);
 }
 
@@ -19,7 +19,7 @@
   text-transform: uppercase;
   letter-spacing: 0.12em;
   font-weight: 600;
-  color: #c4b5fd;
+  color: var(--accent-light);
   opacity: 0.9;
 }
 
@@ -42,7 +42,7 @@
   font-weight: 700;
   line-height: 1;
   letter-spacing: -0.02em;
-  color: #f0eeff;
+  color: var(--text);
 }
 
 .countdown-unit-label {
@@ -108,7 +108,7 @@
    ─────────────────────────────────────────── */
 .countdown-timer.obs-overlay {
   background: rgba(0, 0, 0, 0.72);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--border-strong);
   border-radius: 4px;
   margin: 0;
   padding: 0.875rem 1rem;
