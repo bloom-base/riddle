@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './QuoteMatchingPuzzle.css';
+import ShareButton from './ShareButton';
 
 interface Fragment {
   id: string;
@@ -40,6 +41,7 @@ const QuoteMatchingPuzzle: React.FC<QuoteMatchingPuzzleProps> = ({
   } | null>(null);
   const [submitted, setSubmitted] = useState(false);
   const [shownHints, setShownHints] = useState<Set<string>>(new Set());
+  const [completionTimeMs, setCompletionTimeMs] = useState<number>(0);
 
   // Get the closing fragment ID that matches a given opening
   const getMatchedClosingId = (openingId: string): string | undefined => {
@@ -149,12 +151,13 @@ const QuoteMatchingPuzzle: React.FC<QuoteMatchingPuzzleProps> = ({
     }
   };
 
-  // Call onComplete callback when puzzle is completed
+  // Call onComplete callback when puzzle is completed and capture the exact time
   useEffect(() => {
-    if (submitted && validationResult?.allCorrect && startTime && onComplete) {
-      const completionTime = Date.now() - startTime;
-      if (completionTime > 0) {
-        onComplete(completionTime);
+    if (submitted && validationResult?.allCorrect && startTime) {
+      const elapsed = Date.now() - startTime;
+      if (elapsed > 0) {
+        setCompletionTimeMs(elapsed);
+        if (onComplete) onComplete(elapsed);
       }
     }
   }, [submitted, validationResult, startTime, onComplete]);
@@ -191,8 +194,6 @@ const QuoteMatchingPuzzle: React.FC<QuoteMatchingPuzzleProps> = ({
   };
 
   if (submitted && validationResult?.allCorrect) {
-    const completionTime = startTime ? Date.now() - startTime : 0;
-
     const formatTime = (ms: number): string => {
       const seconds = Math.floor(ms / 1000);
       const minutes = Math.floor(seconds / 60);
@@ -207,18 +208,24 @@ const QuoteMatchingPuzzle: React.FC<QuoteMatchingPuzzleProps> = ({
           <h2>Congratulations!</h2>
           <p>You've matched all the quotes correctly!</p>
           <div className="completion-time">
-            ⏱️ Time: {formatTime(completionTime)}
+            ⏱️ Time: {formatTime(completionTimeMs)}
+          </div>
+          <div className="completion-actions">
+            <ShareButton
+              completionTimeMs={completionTimeMs}
+              puzzleDate={puzzle.date}
+            />
+            <button
+              className="btn btn-primary"
+              onClick={() => window.location.reload()}
+            >
+              Back to Puzzle
+            </button>
           </div>
           <div className="matches-summary">
             <h3>Your matches:</h3>
             {matches.map(renderMatchLine)}
           </div>
-          <button
-            className="btn btn-primary"
-            onClick={() => window.location.reload()}
-          >
-            Back to Puzzle
-          </button>
         </div>
       </div>
     );
