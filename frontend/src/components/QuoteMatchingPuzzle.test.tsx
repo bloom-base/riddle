@@ -19,7 +19,9 @@ const mockPuzzle = {
   hints: [
     { id: 'quote_1', hint: 'This is a famous opening line from a Dickens novel about contrasts.' },
     { id: 'quote_2', hint: 'One of the most famous opening lines in American literature, introducing the narrator.' }
-  ]
+  ],
+  difficulty: 'medium' as const,
+  puzzleHint: 'One of today\'s quotes is by Herman Melville — from "Moby Dick".'
 };
 
 describe('QuoteMatchingPuzzle Component', () => {

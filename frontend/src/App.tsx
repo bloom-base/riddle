@@ -13,6 +13,8 @@ interface Puzzle {
   closings: Array<{ id: string; text: string }>;
   correctMatches: Array<{ id: string; openingId: string; closingId: string }>;
   hints: Array<{ id: string; hint: string }>;
+  difficulty: 'easy' | 'medium' | 'hard';
+  puzzleHint: string;
 }
 
 interface DailyRiddleData {

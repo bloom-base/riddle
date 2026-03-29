@@ -13,6 +13,8 @@ interface Puzzle {
   closings: Fragment[];
   correctMatches: Array<{ id: string; openingId: string; closingId: string }>;
   hints: Array<{ id: string; hint: string }>;
+  difficulty: 'easy' | 'medium' | 'hard';
+  puzzleHint: string;
 }
 
 interface Match {
@@ -42,6 +44,8 @@ const QuoteMatchingPuzzle: React.FC<QuoteMatchingPuzzleProps> = ({
   const [submitted, setSubmitted] = useState(false);
   const [shownHints, setShownHints] = useState<Set<string>>(new Set());
   const [completionTimeMs, setCompletionTimeMs] = useState<number>(0);
+  const [hintUsed, setHintUsed] = useState(false);
+  const [puzzleHintVisible, setPuzzleHintVisible] = useState(false);
 
   // Get the closing fragment ID that matches a given opening
   const getMatchedClosingId = (openingId: string): string | undefined => {
@@ -105,6 +109,12 @@ const QuoteMatchingPuzzle: React.FC<QuoteMatchingPuzzleProps> = ({
   // Remove a match
   const handleRemoveMatch = (openingId: string) => {
     setMatches(matches.filter((m) => m.openingId !== openingId));
+  };
+
+  // Show the puzzle-level hint (one per puzzle)
+  const handleRevealPuzzleHint = () => {
+    setHintUsed(true);
+    setPuzzleHintVisible(true);
   };
 
   // Show hint for a specific quote
@@ -231,8 +241,49 @@ const QuoteMatchingPuzzle: React.FC<QuoteMatchingPuzzleProps> = ({
     );
   }
 
+  const getDifficultyLabel = (d: 'easy' | 'medium' | 'hard') => {
+    switch (d) {
+      case 'easy':   return { label: 'Easy',   icon: '🟢' };
+      case 'medium': return { label: 'Medium', icon: '🟡' };
+      case 'hard':   return { label: 'Hard',   icon: '🔴' };
+      default:       return { label: 'Medium', icon: '🟡' };
+    }
+  };
+
+  const { label: diffLabel, icon: diffIcon } = getDifficultyLabel(puzzle.difficulty);
+
   return (
     <div className="puzzle-container">
+
+      {/* Puzzle header: difficulty badge + hint button */}
+      <div className="puzzle-meta-bar">
+        <span className={`difficulty-badge difficulty-badge--${puzzle.difficulty}`}>
+          {diffIcon} {diffLabel}
+        </span>
+
+        <div className="puzzle-hint-controls">
+          {!hintUsed ? (
+            <button
+              className="btn-puzzle-hint"
+              onClick={handleRevealPuzzleHint}
+              aria-label="Reveal a puzzle hint"
+            >
+              💡 Get Hint
+            </button>
+          ) : (
+            <span className="hint-used-badge">💡 Hint Used</span>
+          )}
+        </div>
+      </div>
+
+      {/* Puzzle-level hint callout (fades in on reveal) */}
+      {puzzleHintVisible && (
+        <div className="puzzle-hint-callout" role="note" aria-live="polite">
+          <span className="puzzle-hint-icon" aria-hidden="true">💡</span>
+          <p className="puzzle-hint-text">{puzzle.puzzleHint}</p>
+        </div>
+      )}
+
       <div className="puzzle-content">
         {/* Left Column: Opening Fragments */}
         <div className="column openings">

@@ -40,7 +40,10 @@ describe('App Component', () => {
       ],
       correctMatches: [
         { id: 'quote_1', openingId: 'opening_1', closingId: 'closing_1' }
-      ]
+      ],
+      hints: [{ id: 'quote_1', hint: 'A famous opening line about contrasts.' }],
+      difficulty: 'medium',
+      puzzleHint: 'One of today\'s quotes is by Charles Dickens — from "A Tale of Two Cities".'
     };
 
     (global.fetch as any).mockResolvedValue({
@@ -61,7 +64,10 @@ describe('App Component', () => {
       date: '2024-01-15',
       openings: [],
       closings: [],
-      correctMatches: []
+      correctMatches: [],
+      hints: [],
+      difficulty: 'easy',
+      puzzleHint: 'One of today\'s quotes is by Mark Twain — from "The Adventures of Huckleberry Finn".'
     };
 
     (global.fetch as any).mockResolvedValueOnce({

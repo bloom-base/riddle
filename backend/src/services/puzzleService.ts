@@ -17,6 +17,8 @@ export interface Puzzle {
   closings: Array<{ id: string; text: string }>;
   correctMatches: PuzzleMatch[];
   hints: Array<{ id: string; hint: string }>;
+  difficulty: 'easy' | 'medium' | 'hard';
+  puzzleHint: string;
 }
 
 export interface ValidationResult {
@@ -70,12 +72,31 @@ export function generatePuzzle(date: Date = new Date()): Puzzle {
     hint: quote.hint
   }));
 
+  // Compute overall puzzle difficulty from the mix of quote difficulties
+  const difficultyCounts = { easy: 0, medium: 0, hard: 0 };
+  todaysQuotes.forEach((q) => { difficultyCounts[q.difficulty]++; });
+  let difficulty: 'easy' | 'medium' | 'hard';
+  if (difficultyCounts.hard > todaysQuotes.length * 0.4) {
+    difficulty = 'hard';
+  } else if (difficultyCounts.medium + difficultyCounts.hard > todaysQuotes.length * 0.5) {
+    difficulty = 'medium';
+  } else {
+    difficulty = 'easy';
+  }
+
+  // Generate a single puzzle-level hint using a deterministic quote from today's set
+  const hintQuoteIndex = Math.abs(seedFromDate) % todaysQuotes.length;
+  const hintQuote = todaysQuotes[hintQuoteIndex];
+  const puzzleHint = `One of today's quotes is by ${hintQuote.author} — from "${hintQuote.book}".`;
+
   return {
     date: dateString,
     openings,
     closings: shuffledClosings,
     correctMatches,
-    hints
+    hints,
+    difficulty,
+    puzzleHint
   };
 }
 
