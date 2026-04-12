@@ -501,6 +501,76 @@ body {
 }
 
 /* ===========================
+   HEADER NAVIGATION
+   =========================== */
+.header-nav {
+  display: flex;
+  gap: 0.5rem;
+  flex: 1;
+  justify-content: center;
+}
+
+.nav-pill {
+  padding: 0.5rem 1rem;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all var(--t);
+  white-space: nowrap;
+}
+
+.nav-pill:hover {
+  border-color: var(--border-accent);
+  color: var(--text);
+}
+
+.nav-pill.active {
+  background: var(--accent-dim);
+  border-color: var(--accent);
+  color: var(--accent-light);
+  box-shadow: var(--accent-glow);
+}
+
+.nav-pill:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ===========================
+   BACK BUTTON
+   =========================== */
+.back-button {
+  padding: 0.75rem 1.5rem;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-size: 0.9rem;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all var(--t);
+  margin-bottom: 1rem;
+  display: inline-block;
+}
+
+.back-button:hover {
+  border-color: var(--border-accent);
+  background: var(--accent-dim);
+  color: var(--accent-light);
+}
+
+.back-button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ===========================
    RESPONSIVE — tablet
    =========================== */
 @media (max-width: 768px) {
@@ -518,6 +588,15 @@ body {
 
   .user-pill-name {
     max-width: 80px;
+  }
+
+  .header-nav {
+    gap: 0.25rem;
+  }
+
+  .nav-pill {
+    padding: 0.45rem 0.8rem;
+    font-size: 0.8rem;
   }
 
   .hero-inner {
@@ -550,6 +629,10 @@ body {
 
   .brand-icon {
     font-size: 1.55rem;
+  }
+
+  .header-nav {
+    display: none;
   }
 
   .puzzle-hero {

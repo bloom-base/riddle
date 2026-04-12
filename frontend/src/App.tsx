@@ -5,6 +5,7 @@ import Leaderboard from './components/Leaderboard';
 import CountdownTimer from './components/CountdownTimer';
 import DailyRiddle from './components/DailyRiddle';
 import StreakBadge from './components/StreakBadge';
+import PuzzleArchive from './components/PuzzleArchive';
 import { useStreak } from './hooks/useStreak';
 
 interface Puzzle {
@@ -45,6 +46,11 @@ function App() {
   const [username, setUsername] = useState<string>('');
   const [showUsernamePrompt, setShowUsernamePrompt] = useState(false);
   const [startTime, setStartTime] = useState<number | null>(null);
+  const [mode, setMode] = useState<'daily' | 'archive'>('daily');
+  const [archiveDate, setArchiveDate] = useState<string | null>(null);
+  const [archivePuzzle, setArchivePuzzle] = useState<Puzzle | null>(null);
+  const [archiveRiddle, setArchiveRiddle] = useState<DailyRiddleData | null>(null);
+  const [archiveLoading, setArchiveLoading] = useState(false);
   const usernameInputRef = useRef<HTMLInputElement>(null);
 
   const { currentStreak, longestStreak, hasSolvedDate, recordSolve } = useStreak();
@@ -95,6 +101,36 @@ function App() {
     }
   }, [showUsernamePrompt]);
 
+  // Load puzzle for archive date
+  useEffect(() => {
+    if (mode === 'archive' && archiveDate) {
+      const loadArchivePuzzle = async () => {
+        try {
+          setArchiveLoading(true);
+          const [puzzleResponse, riddleResponse] = await Promise.all([
+            fetch(`/api/puzzle/${archiveDate}`),
+            fetch(`/api/riddle/${archiveDate}`),
+          ]);
+
+          if (!puzzleResponse.ok) throw new Error('Failed to fetch puzzle');
+          if (!riddleResponse.ok) throw new Error('Failed to fetch riddle');
+
+          const puzzleData = await puzzleResponse.json();
+          const riddleData = await riddleResponse.json();
+
+          setArchivePuzzle(puzzleData);
+          setArchiveRiddle(riddleData);
+        } catch (err) {
+          console.error('Error loading archive puzzle:', err);
+        } finally {
+          setArchiveLoading(false);
+        }
+      };
+
+      loadArchivePuzzle();
+    }
+  }, [mode, archiveDate]);
+
   const handleSetUsername = (name: string) => {
     const trimmed = name.trim();
     if (trimmed.length > 0 && trimmed.length <= 50) {
@@ -126,6 +162,37 @@ function App() {
     } catch (err) {
       console.error('Error submitting to leaderboard:', err);
     }
+  };
+
+  const handleArchivePuzzleComplete = async (completionTimeMs: number) => {
+    if (!archivePuzzle || !username) return;
+
+    recordSolve(archivePuzzle.date);
+
+    try {
+      await fetch('/api/leaderboard/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          date: archivePuzzle.date,
+          username,
+          completionTime: completionTimeMs,
+        }),
+      });
+    } catch (err) {
+      console.error('Error submitting archive puzzle to leaderboard:', err);
+    }
+  };
+
+  const handleSelectArchiveDate = (date: string) => {
+    setArchiveDate(date);
+  };
+
+  const handleBackToDaily = () => {
+    setMode('daily');
+    setArchiveDate(null);
+    setArchivePuzzle(null);
+    setArchiveRiddle(null);
   };
 
   /* ── Loading ── */
@@ -211,6 +278,25 @@ function App() {
             </div>
           </div>
 
+          <div className="header-nav">
+            <button
+              className={`nav-pill ${mode === 'daily' ? 'active' : ''}`}
+              onClick={() => setMode('daily')}
+              title="View today's puzzle"
+              aria-label="View today's puzzle"
+            >
+              ⏰ Today
+            </button>
+            <button
+              className={`nav-pill ${mode === 'archive' ? 'active' : ''}`}
+              onClick={() => setMode('archive')}
+              title="Browse puzzle archive"
+              aria-label="Browse puzzle archive"
+            >
+              📚 Archive
+            </button>
+          </div>
+
           <div className="header-right">
             <StreakBadge
               currentStreak={currentStreak}
@@ -233,26 +319,99 @@ function App() {
         </div>
       </header>
 
-      {/* ── Date hero banner ── */}
-      <div className="puzzle-hero" aria-label="Today's puzzle info">
-        <div className="hero-inner">
-          <div className="hero-date-block">
-            <span className="hero-eyebrow">Today's puzzle</span>
-            <span className="hero-date">{formatPuzzleDate(puzzle.date)}</span>
-          </div>
-          <CountdownTimer />
-        </div>
-      </div>
-
       {/* ── Main content ── */}
       <main className="main-content">
-        {riddle && <DailyRiddle riddle={riddle} />}
-        <QuoteMatchingPuzzle
-          puzzle={puzzle}
-          onComplete={handlePuzzleComplete}
-          startTime={startTime ?? 0}
-        />
-        <Leaderboard date={puzzle.date} />
+        {mode === 'daily' ? (
+          <>
+            {/* ── Date hero banner ── */}
+            <div className="puzzle-hero" aria-label="Today's puzzle info">
+              <div className="hero-inner">
+                <div className="hero-date-block">
+                  <span className="hero-eyebrow">Today's puzzle</span>
+                  <span className="hero-date">{formatPuzzleDate(puzzle.date)}</span>
+                </div>
+                <CountdownTimer />
+              </div>
+            </div>
+
+            {riddle && <DailyRiddle riddle={riddle} />}
+            <QuoteMatchingPuzzle
+              puzzle={puzzle}
+              onComplete={handlePuzzleComplete}
+              startTime={startTime ?? 0}
+            />
+            <Leaderboard date={puzzle.date} />
+          </>
+        ) : (
+          <>
+            {!archiveDate ? (
+              <PuzzleArchive
+                solvedDates={new Set(
+                  Array.from({ length: 365 }, (_, i) => {
+                    const d = new Date();
+                    d.setDate(d.getDate() - i);
+                    return d.toISOString().split('T')[0];
+                  }).filter((date) => hasSolvedDate(date))
+                )}
+                onSelectDate={handleSelectArchiveDate}
+              />
+            ) : archiveLoading ? (
+              <div className="loading-screen">
+                <span className="loading-icon">🎭</span>
+                <p className="loading-text">Loading puzzle…</p>
+                <div className="loading-dots">
+                  <span className="loading-dot" />
+                  <span className="loading-dot" />
+                  <span className="loading-dot" />
+                </div>
+              </div>
+            ) : archivePuzzle ? (
+              <>
+                <button
+                  className="back-button"
+                  onClick={handleBackToDaily}
+                  aria-label="Back to archive"
+                >
+                  ← Back to Archive
+                </button>
+
+                {/* ── Date hero banner ── */}
+                <div className="puzzle-hero" aria-label="Archive puzzle info">
+                  <div className="hero-inner">
+                    <div className="hero-date-block">
+                      <span className="hero-eyebrow">
+                        {hasSolvedDate(archivePuzzle.date) ? '✓ Solved' : 'Not solved'}
+                      </span>
+                      <span className="hero-date">{formatPuzzleDate(archivePuzzle.date)}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {archiveRiddle && <DailyRiddle riddle={archiveRiddle} />}
+                <QuoteMatchingPuzzle
+                  puzzle={archivePuzzle}
+                  onComplete={handleArchivePuzzleComplete}
+                  startTime={0}
+                />
+                <Leaderboard date={archivePuzzle.date} />
+              </>
+            ) : (
+              <div className="error-screen">
+                <span className="error-icon">😵</span>
+                <p className="error-title">Puzzle not found</p>
+                <p className="error-body">Could not load this puzzle. Try selecting another date.</p>
+                <button
+                  className="modal-btn-primary"
+                  onClick={() => {
+                    setArchiveDate(null);
+                  }}
+                >
+                  Back to Archive
+                </button>
+              </div>
+            )}
+          </>
+        )}
       </main>
 
       {/* ── Footer ── */}
