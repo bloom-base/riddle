@@ -6,6 +6,35 @@
 
 ---
 
+## About Riddle
+
+**Riddle** is a daily puzzle game platform designed with one simple philosophy: *one puzzle a day keeps the brain sharp*. Each day brings a fresh, beautifully crafted puzzle to challenge your mind and keep your cognitive skills sharp.
+
+What makes Riddle special:
+- **One Puzzle Per Day**: A consistent daily puzzle that everyone solves together
+- **Growing Puzzle Library**: Start with quote matching, expand with anagrams, logic puzzles, and more
+- **Beautiful & Accessible**: Clean, intuitive interface that works seamlessly on desktop, tablet, and mobile
+- **Community Focused**: Built for sharing, streaming, and friendly competition
+- **Streamer Ready**: Live leaderboards, OBS overlays, and Twitch integration included
+
+Whether you're a casual puzzle enthusiast or a competitive gamer, Riddle provides the perfect daily mental workout.
+
+### Quick Start - Local Development
+
+Get Riddle running on your machine in just three commands:
+
+```bash
+git clone https://github.com/bloom-base/riddle.git
+cd riddle && npm install
+npm run dev
+```
+
+Open http://localhost:3000 to start solving puzzles! The frontend runs on port 3000 and the backend API runs on port 3001. Both have hot-reload enabled for development.
+
+For detailed setup, testing, building, and deployment instructions, see the [Getting Started](#getting-started) and [Deployment](#deployment) sections below.
+
+---
+
 ## Current Puzzle: Quote Fragment Matching
 
 Match opening and closing fragments from famous U.S. literature quotes to complete the lines. One beautiful puzzle per day!
