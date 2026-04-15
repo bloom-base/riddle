@@ -1,8 +1,9 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import './App.css';
 import QuoteMatchingPuzzle from './components/QuoteMatchingPuzzle';
 import Leaderboard from './components/Leaderboard';
 import CountdownTimer from './components/CountdownTimer';
+import PuzzleTimer from './components/PuzzleTimer';
 import DailyRiddle from './components/DailyRiddle';
 import StreakBadge from './components/StreakBadge';
 import PuzzleArchive from './components/PuzzleArchive';
@@ -51,9 +52,24 @@ function App() {
   const [archivePuzzle, setArchivePuzzle] = useState<Puzzle | null>(null);
   const [archiveRiddle, setArchiveRiddle] = useState<DailyRiddleData | null>(null);
   const [archiveLoading, setArchiveLoading] = useState(false);
+  const [showTimer, setShowTimer] = useState<boolean>(() => {
+    const saved = localStorage.getItem('riddleShowTimer');
+    return saved === null ? false : saved === 'true';
+  });
+  const [timeExpired, setTimeExpired] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
   const usernameInputRef = useRef<HTMLInputElement>(null);
 
   const { currentStreak, longestStreak, hasSolvedDate, recordSolve } = useStreak();
+
+  // Persist timer preference
+  useEffect(() => {
+    localStorage.setItem('riddleShowTimer', String(showTimer));
+  }, [showTimer]);
+
+  const handleTimerExpire = useCallback(() => {
+    setTimeExpired(true);
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -312,9 +328,31 @@ function App() {
               >
                 <span className="user-pill-icon" aria-hidden="true">👤</span>
                 <span className="user-pill-name">{username}</span>
-                <span className="user-pill-gear" aria-hidden="true">⚙️</span>
               </button>
             )}
+            <div className="settings-wrapper">
+              <button
+                className="settings-btn"
+                onClick={() => setShowSettings((s) => !s)}
+                title="Settings"
+                aria-label="Open settings"
+                aria-expanded={showSettings}
+              >
+                ⚙️
+              </button>
+              {showSettings && (
+                <div className="settings-dropdown" role="menu">
+                  <label className="settings-option">
+                    <input
+                      type="checkbox"
+                      checked={showTimer}
+                      onChange={(e) => setShowTimer(e.target.checked)}
+                    />
+                    <span className="settings-option-label">Show countdown timer</span>
+                  </label>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </header>
@@ -334,11 +372,16 @@ function App() {
               </div>
             </div>
 
+            <PuzzleTimer
+              visible={showTimer}
+              onExpire={handleTimerExpire}
+            />
             {riddle && <DailyRiddle riddle={riddle} />}
             <QuoteMatchingPuzzle
               puzzle={puzzle}
               onComplete={handlePuzzleComplete}
               startTime={startTime ?? 0}
+              disabled={timeExpired && showTimer}
             />
             <Leaderboard date={puzzle.date} />
           </>

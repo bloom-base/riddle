@@ -1,0 +1,122 @@
+/* ───────────────────────────────────────────
+   PuzzleTimer — countdown bar + digits
+   ─────────────────────────────────────────── */
+
+/* Colour tokens for the gradient stages */
+:root {
+  --timer-green: #10b981;
+  --timer-yellow: #f59e0b;
+  --timer-red: #ef4444;
+}
+
+.puzzle-timer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.875rem 1.25rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  transition: opacity var(--t), transform var(--t);
+}
+
+/* ── Header row: label + digits ── */
+.puzzle-timer__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.puzzle-timer__label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.puzzle-timer__digits {
+  font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--text);
+}
+
+/* ── Progress track ── */
+.puzzle-timer__track {
+  position: relative;
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--bg-elevated);
+  overflow: hidden;
+}
+
+.puzzle-timer__fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  border-radius: 3px;
+  transition: width 1s linear, background-color 2s ease;
+  /* Subtle glow matching current colour */
+  box-shadow: 0 0 8px currentColor;
+}
+
+/* ── Expired state ── */
+.puzzle-timer--expired {
+  border-color: var(--border-accent);
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.12) 0%, rgba(124, 58, 237, 0.05) 100%);
+}
+
+.puzzle-timer__expired-msg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 0.25rem 0;
+}
+
+.puzzle-timer__expired-icon {
+  font-size: 1.2rem;
+}
+
+.puzzle-timer__expired-text {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--accent-light);
+  letter-spacing: 0.02em;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .puzzle-timer {
+    padding: 0.75rem 1rem;
+    gap: 0.4rem;
+  }
+
+  .puzzle-timer__digits {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .puzzle-timer {
+    padding: 0.625rem 0.875rem;
+    gap: 0.35rem;
+  }
+
+  .puzzle-timer__label {
+    font-size: 0.62rem;
+  }
+
+  .puzzle-timer__digits {
+    font-size: 0.9rem;
+  }
+
+  .puzzle-timer__track {
+    height: 5px;
+  }
+}
