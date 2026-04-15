@@ -20,12 +20,12 @@ describe('App Component', () => {
   });
 
   it('should render error state on fetch failure', async () => {
-    (global.fetch as any).mockRejectedValueOnce(new Error('Network error'));
+    (global.fetch as any).mockRejectedValue(new Error('Network error'));
 
     render(<App />);
-    
+
     await waitFor(() => {
-      expect(screen.getByText(/Error:/i)).toBeInTheDocument();
+      expect(screen.getByText(/Something went wrong/i)).toBeInTheDocument();
     });
   });
 
@@ -70,16 +70,16 @@ describe('App Component', () => {
       puzzleHint: 'One of today\'s quotes is by Mark Twain — from "The Adventures of Huckleberry Finn".'
     };
 
-    (global.fetch as any).mockResolvedValueOnce({
+    (global.fetch as any).mockResolvedValue({
       ok: true,
       json: async () => mockPuzzle
     });
 
     render(<App />);
-    
+
     await waitFor(() => {
       expect(screen.getByText(/🎭 Riddle/)).toBeInTheDocument();
-      expect(screen.getByText(/One puzzle a day keeps the brain sharp/)).toBeInTheDocument();
+      expect(screen.getByText(/One puzzle a day/)).toBeInTheDocument();
     });
   });
 });

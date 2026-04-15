@@ -27,12 +27,15 @@ interface QuoteMatchingPuzzleProps {
   puzzle: Puzzle;
   onComplete?: (completionTimeMs: number) => void;
   startTime?: number;
+  /** When true, interactions and submission are blocked (e.g. timer expired) */
+  disabled?: boolean;
 }
 
-const QuoteMatchingPuzzle: React.FC<QuoteMatchingPuzzleProps> = ({ 
-  puzzle, 
+const QuoteMatchingPuzzle: React.FC<QuoteMatchingPuzzleProps> = ({
+  puzzle,
   onComplete,
-  startTime = 0
+  startTime = 0,
+  disabled = false,
 }) => {
   const [matches, setMatches] = useState<Match[]>([]);
   const [draggedOpening, setDraggedOpening] = useState<string | null>(null);
@@ -406,11 +409,13 @@ const QuoteMatchingPuzzle: React.FC<QuoteMatchingPuzzleProps> = ({
         <button
           className={`btn btn-primary ${matches.length === puzzle.openings.length ? 'ready' : ''}`}
           onClick={handleSubmit}
-          disabled={matches.length === 0}
+          disabled={matches.length === 0 || disabled}
         >
-          {matches.length === puzzle.openings.length
-            ? '✓ Submit All Matches'
-            : `Submit (${matches.length}/${puzzle.openings.length})`}
+          {disabled
+            ? '⏰ Time\u2019s Up'
+            : matches.length === puzzle.openings.length
+              ? '✓ Submit All Matches'
+              : `Submit (${matches.length}/${puzzle.openings.length})`}
         </button>
       </div>
     </div>
