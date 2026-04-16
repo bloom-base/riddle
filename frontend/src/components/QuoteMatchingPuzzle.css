@@ -370,7 +370,35 @@
   margin-bottom: 0.25rem;
 }
 
-/* Difficulty badge */
+/* Difficulty display with stars */
+.difficulty-display {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.6rem 1.2rem;
+  border-radius: var(--radius-lg);
+  font-size: 0.95rem;
+  font-weight: 600;
+  border: 1px solid var(--border-strong);
+  user-select: none;
+  background: rgba(139, 92, 246, 0.08);
+  transition: all 0.3s ease;
+}
+
+.difficulty-display:hover {
+  border-color: var(--accent);
+  background: rgba(139, 92, 246, 0.14);
+}
+
+.difficulty-label {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+
+/* Keep old difficulty badge styles for backwards compatibility */
 .difficulty-badge {
   display: inline-flex;
   align-items: center;
