@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './QuoteMatchingPuzzle.css';
 import ShareButton from './ShareButton';
+import DifficultyStars from './DifficultyStars';
 
 interface Fragment {
   id: string;
@@ -246,23 +247,28 @@ const QuoteMatchingPuzzle: React.FC<QuoteMatchingPuzzleProps> = ({
 
   const getDifficultyLabel = (d: 'easy' | 'medium' | 'hard') => {
     switch (d) {
-      case 'easy':   return { label: 'Easy',   icon: '🟢' };
-      case 'medium': return { label: 'Medium', icon: '🟡' };
-      case 'hard':   return { label: 'Hard',   icon: '🔴' };
-      default:       return { label: 'Medium', icon: '🟡' };
+      case 'easy':   return 'Easy';
+      case 'medium': return 'Medium';
+      case 'hard':   return 'Hard';
+      default:       return 'Medium';
     }
   };
 
-  const { label: diffLabel, icon: diffIcon } = getDifficultyLabel(puzzle.difficulty);
+  const diffLabel = getDifficultyLabel(puzzle.difficulty);
 
   return (
     <div className="puzzle-container">
 
-      {/* Puzzle header: difficulty badge + hint button */}
+      {/* Puzzle header: difficulty stars + hint button */}
       <div className="puzzle-meta-bar">
-        <span className={`difficulty-badge difficulty-badge--${puzzle.difficulty}`}>
-          {diffIcon} {diffLabel}
-        </span>
+        <div className="difficulty-display">
+          <DifficultyStars
+            difficulty={puzzle.difficulty}
+            animated
+            size="large"
+          />
+          <span className="difficulty-label">{diffLabel}</span>
+        </div>
 
         <div className="puzzle-hint-controls">
           {!hintUsed ? (

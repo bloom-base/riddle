@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './DailyRiddle.css';
+import DifficultyStars from './DifficultyStars';
 
 interface DailyRiddleData {
   date: string;
@@ -21,27 +22,16 @@ const DailyRiddle: React.FC<DailyRiddleProps> = ({ riddle }) => {
     setIsRevealed(true);
   };
 
-  const getDifficultyEmoji = (difficulty: string) => {
-    switch (difficulty) {
-      case 'easy':
-        return '⭐';
-      case 'medium':
-        return '⭐⭐';
-      case 'hard':
-        return '⭐⭐⭐';
-      default:
-        return '⭐';
-    }
-  };
-
   return (
     <div className="daily-riddle">
       <div className="riddle-header">
         <h2>🤔 Daily Riddle</h2>
         <div className="riddle-meta">
-          <span className="difficulty" title={`Difficulty: ${riddle.difficulty}`}>
-            {getDifficultyEmoji(riddle.difficulty)}
-          </span>
+          <DifficultyStars
+            difficulty={riddle.difficulty as 'easy' | 'medium' | 'hard'}
+            animated
+            size="medium"
+          />
           <span className="category">{riddle.category}</span>
         </div>
       </div>

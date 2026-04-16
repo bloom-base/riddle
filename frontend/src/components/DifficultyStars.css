@@ -1,0 +1,104 @@
+.difficulty-stars {
+  display: inline-flex;
+  gap: 0.25rem;
+  align-items: center;
+  transition: all 0.3s ease;
+}
+
+/* Size variants */
+.difficulty-stars.small {
+  gap: 0.15rem;
+}
+
+.difficulty-stars.small .star {
+  font-size: 0.9rem;
+}
+
+.difficulty-stars.medium {
+  gap: 0.25rem;
+}
+
+.difficulty-stars.medium .star {
+  font-size: 1.2rem;
+}
+
+.difficulty-stars.large {
+  gap: 0.35rem;
+}
+
+.difficulty-stars.large .star {
+  font-size: 1.5rem;
+}
+
+/* Star styling and animation */
+.difficulty-stars .star {
+  display: inline-block;
+  opacity: 0.3;
+  transform: scale(0);
+  transform-origin: center;
+  font-weight: 900;
+  line-height: 1;
+}
+
+/* Animation for stars filling in on load */
+.difficulty-stars.animating .star {
+  animation: starFill 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes starFill {
+  0% {
+    opacity: 0;
+    transform: scale(0);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Color variants - Green for easy */
+.difficulty-stars.easy .star {
+  color: #10b981;
+}
+
+.difficulty-stars.easy {
+  filter: drop-shadow(0 0 4px rgba(16, 185, 129, 0.3));
+}
+
+/* Color variants - Yellow for medium */
+.difficulty-stars.medium .star {
+  color: #f59e0b;
+}
+
+.difficulty-stars.medium {
+  filter: drop-shadow(0 0 4px rgba(245, 158, 11, 0.3));
+}
+
+/* Color variants - Red for hard */
+.difficulty-stars.hard .star {
+  color: #ef4444;
+}
+
+.difficulty-stars.hard {
+  filter: drop-shadow(0 0 4px rgba(239, 68, 68, 0.3));
+}
+
+/* Interaction effects */
+.difficulty-stars {
+  cursor: default;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .difficulty-stars.large {
+    gap: 0.25rem;
+  }
+
+  .difficulty-stars.large .star {
+    font-size: 1.2rem;
+  }
+}
