@@ -23,8 +23,8 @@ describe('DailyRiddle', () => {
     render(<DailyRiddle riddle={mockRiddle} />);
 
     expect(screen.getByText(mockRiddle.category)).toBeInTheDocument();
-    // Check for difficulty stars (easy = ⭐)
-    expect(screen.getByTitle('Difficulty: easy')).toBeInTheDocument();
+    // Check for difficulty stars (easy = 2 stars)
+    expect(screen.getByTitle('Difficulty: Easy')).toBeInTheDocument();
   });
 
   it('initially hides the answer', () => {
@@ -44,28 +44,28 @@ describe('DailyRiddle', () => {
     expect(screen.queryByText(/Reveal Answer/i)).not.toBeInTheDocument();
   });
 
-  it('displays correct difficulty emoji for easy riddle', () => {
+  it('displays correct difficulty stars for easy riddle', () => {
     const easyRiddle = { ...mockRiddle, difficulty: 'easy' };
     render(<DailyRiddle riddle={easyRiddle} />);
 
-    const difficultyElement = screen.getByTitle('Difficulty: easy');
-    expect(difficultyElement.textContent).toBe('⭐');
+    const difficultyElement = screen.getByTitle('Difficulty: Easy');
+    expect(difficultyElement.textContent).toBe('★★');
   });
 
-  it('displays correct difficulty emoji for medium riddle', () => {
+  it('displays correct difficulty stars for medium riddle', () => {
     const mediumRiddle = { ...mockRiddle, difficulty: 'medium' };
     render(<DailyRiddle riddle={mediumRiddle} />);
 
-    const difficultyElement = screen.getByTitle('Difficulty: medium');
-    expect(difficultyElement.textContent).toBe('⭐⭐');
+    const difficultyElement = screen.getByTitle('Difficulty: Medium');
+    expect(difficultyElement.textContent).toBe('★★★');
   });
 
-  it('displays correct difficulty emoji for hard riddle', () => {
+  it('displays correct difficulty stars for hard riddle', () => {
     const hardRiddle = { ...mockRiddle, difficulty: 'hard' };
     render(<DailyRiddle riddle={hardRiddle} />);
 
-    const difficultyElement = screen.getByTitle('Difficulty: hard');
-    expect(difficultyElement.textContent).toBe('⭐⭐⭐');
+    const difficultyElement = screen.getByTitle('Difficulty: Hard');
+    expect(difficultyElement.textContent).toBe('★★★★★');
   });
 
   it('shows answer label when revealed', () => {
