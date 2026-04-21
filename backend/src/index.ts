@@ -17,6 +17,8 @@ import {
   getUserBestTime
 } from './services/leaderboardService.js';
 import { getDailyRiddle } from './services/riddleService.js';
+import { initializeRedis, disconnectRedis, deleteCached, deleteCachedByPattern } from './utils/redisClient.js';
+import { cacheMiddleware, leaderboardCacheKey, riddleCacheKey } from './middleware/cacheMiddleware.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -121,8 +123,9 @@ app.post('/api/validate', (req: Request, res: Response) => {
  * GET /api/riddle/:date
  * Get today's riddle or riddle for a specific date
  * Date format: YYYY-MM-DD (optional, defaults to today UTC)
+ * ✅ CACHED: 24-hour TTL (riddles don't change per day)
  */
-app.get('/api/riddle', (req: Request, res: Response) => {
+app.get('/api/riddle', cacheMiddleware(86400, riddleCacheKey), (req: Request, res: Response) => {
   try {
     const riddle = getDailyRiddle();
     res.json(riddle);
@@ -132,7 +135,7 @@ app.get('/api/riddle', (req: Request, res: Response) => {
   }
 });
 
-app.get('/api/riddle/:date', (req: Request, res: Response) => {
+app.get('/api/riddle/:date', cacheMiddleware(86400, riddleCacheKey), (req: Request, res: Response) => {
   try {
     let date = new Date();
 
@@ -164,8 +167,9 @@ app.get('/api/health', (req: Request, res: Response) => {
  * POST /api/leaderboard/submit
  * Submit a completion time to the leaderboard
  * Body: { date: string, username: string, completionTime: number }
+ * 🔄 CACHE INVALIDATION: Invalidates leaderboard and stats cache for the date
  */
-app.post('/api/leaderboard/submit', (req: Request, res: Response) => {
+app.post('/api/leaderboard/submit', async (req: Request, res: Response) => {
   try {
     const { date, username, completionTime } = req.body;
 
@@ -178,6 +182,12 @@ app.post('/api/leaderboard/submit', (req: Request, res: Response) => {
     }
 
     const entry = submitCompletion(date, username, completionTime);
+
+    // Invalidate leaderboard and stats cache for this date
+    await deleteCachedByPattern(`leaderboard:${date}:*`);
+    await deleteCached(`stats:${date}`);
+    console.log(`🗑️  Cache invalidated for leaderboard and stats on ${date}`);
+
     res.json({
       success: true,
       entry,
@@ -193,8 +203,9 @@ app.post('/api/leaderboard/submit', (req: Request, res: Response) => {
  * GET /api/leaderboard/:date
  * Get leaderboard for a specific date
  * Optional query param: limit (default: 20)
+ * ✅ CACHED: 5-minute TTL (leaderboards update frequently but don't need real-time)
  */
-app.get('/api/leaderboard/:date', (req: Request, res: Response) => {
+app.get('/api/leaderboard/:date', cacheMiddleware(300, leaderboardCacheKey), (req: Request, res: Response) => {
   try {
     const { date } = req.params;
     const limit = req.query.limit ? parseInt(req.query.limit as string) : 20;
@@ -267,18 +278,48 @@ app.get('*', (req: Request, res: Response) => {
   res.sendFile(path.join(frontendPath, 'index.html'));
 });
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`🎭 Riddle backend server running on http://localhost:${PORT}`);
-  console.log(`📚 API Documentation:`);
-  console.log(`   GET  /api/riddle/:date              - Get daily riddle (default: today UTC)`);
-  console.log(`   GET  /api/puzzle/:date              - Get puzzle for date (default: today)`);
-  console.log(`   POST /api/validate                  - Validate match attempts`);
-  console.log(`   POST /api/leaderboard/submit        - Submit completion time`);
-  console.log(`   GET  /api/leaderboard/:date         - Get leaderboard for date`);
-  console.log(`   GET  /api/stats/:date               - Get daily statistics`);
-  console.log(`   GET  /api/leaderboard/:date/user/:username - Check user completion`);
-  console.log(`   GET  /api/health                    - Health check`);
+// Initialize Redis and start server
+async function startServer() {
+  try {
+    // Initialize Redis caching
+    await initializeRedis();
+    console.log('');
+  } catch (error) {
+    console.warn('Redis initialization skipped');
+  }
+
+  app.listen(PORT, () => {
+    console.log(`🎭 Riddle backend server running on http://localhost:${PORT}`);
+    console.log(`📚 API Documentation:`);
+    console.log(`   GET  /api/riddle/:date              - Get daily riddle (default: today UTC)`);
+    console.log(`   GET  /api/puzzle/:date              - Get puzzle for date (default: today)`);
+    console.log(`   POST /api/validate                  - Validate match attempts`);
+    console.log(`   POST /api/leaderboard/submit        - Submit completion time`);
+    console.log(`   GET  /api/leaderboard/:date         - Get leaderboard for date`);
+    console.log(`   GET  /api/stats/:date               - Get daily statistics`);
+    console.log(`   GET  /api/leaderboard/:date/user/:username - Check user completion`);
+    console.log(`   GET  /api/health                    - Health check`);
+    console.log('');
+    console.log(`💾 Redis Cache Layer: ${process.env.REDIS_URL ? '✅ Enabled' : '⚠️  Disabled (set REDIS_URL to enable)'}`);
+  });
+
+  // Graceful shutdown
+  process.on('SIGTERM', async () => {
+    console.log('SIGTERM received, shutting down gracefully...');
+    await disconnectRedis();
+    process.exit(0);
+  });
+
+  process.on('SIGINT', async () => {
+    console.log('SIGINT received, shutting down gracefully...');
+    await disconnectRedis();
+    process.exit(0);
+  });
+}
+
+startServer().catch((error) => {
+  console.error('Failed to start server:', error);
+  process.exit(1);
 });
 
 export default app;
