@@ -7,11 +7,19 @@ import { createClient, RedisClientType } from 'redis';
 
 let redisClient: RedisClientType | null = null;
 let isConnected = false;
+let initialized = false; // Guard against multiple initialization attempts
 
 /**
  * Initialize and connect to Redis
+ * Idempotent - safe to call multiple times
  */
 export async function initializeRedis(): Promise<RedisClientType | null> {
+  // Guard against multiple initialization attempts
+  if (initialized) {
+    return redisClient;
+  }
+  initialized = true;
+
   try {
     // Check if Redis is available via environment variable
     const redisUrl = process.env.REDIS_URL;
@@ -24,6 +32,7 @@ export async function initializeRedis(): Promise<RedisClientType | null> {
     redisClient = createClient({
       url: redisUrl,
       socket: {
+        connectTimeout: 5000, // 5 second timeout to fail-fast if Redis unavailable
         reconnectStrategy: (retries) => {
           if (retries > 10) {
             console.error('❌ Redis reconnection failed after 10 attempts');
@@ -139,9 +148,20 @@ export async function deleteCachedByPattern(pattern: string): Promise<number> {
  */
 export async function disconnectRedis(): Promise<void> {
   if (redisClient) {
-    await redisClient.quit();
-    redisClient = null;
-    isConnected = false;
-    console.log('Redis disconnected');
+    try {
+      // Add timeout to prevent hanging on stuck connections
+      const quitPromise = redisClient.quit();
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Quit timeout')), 2000)
+      );
+
+      await Promise.race([quitPromise, timeoutPromise]);
+    } catch (error) {
+      console.warn('Error disconnecting from Redis:', error);
+    } finally {
+      redisClient = null;
+      isConnected = false;
+      console.log('Redis disconnected');
+    }
   }
 }
