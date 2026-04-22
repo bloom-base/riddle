@@ -78,6 +78,8 @@
   color: white;
 }
 
+/* ── Reveal answer button ── */
+
 .reveal-button {
   background: rgba(255, 255, 255, 0.92);
   color: var(--accent-hover);
@@ -102,6 +104,8 @@
   transform: translateY(0);
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
 }
+
+/* ── Answer ── */
 
 .riddle-answer {
   padding: 1.5rem;
@@ -142,7 +146,150 @@
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
 }
 
-/* Mobile responsive */
+/* ─────────────────────────────────────────────
+   Hint Section
+   ───────────────────────────────────────────── */
+
+.hint-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.hint-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+/* ── Get Hint button ── */
+
+.hint-button {
+  background: rgba(255, 255, 255, 0.18);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 0.6rem 1.4rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  backdrop-filter: blur(6px);
+}
+
+.hint-button:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.hint-button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.hint-button--disabled,
+.hint-button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* ── Hint counter ── */
+
+.hint-counter {
+  font-size: 0.85rem;
+  font-weight: 500;
+  opacity: 0.8;
+  letter-spacing: 0.5px;
+}
+
+/* ── Hint display card — slides in from the left with a glow ── */
+
+.hint-display {
+  padding: 1rem 1.25rem;
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(8px);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  /* Slide-in + glow animation */
+  animation: hintSlideIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.hint-display--complete {
+  box-shadow: 0 0 18px 2px rgba(255, 255, 255, 0.12);
+}
+
+.hint-display--animating {
+  box-shadow: 0 0 24px 4px rgba(255, 255, 255, 0.18);
+}
+
+@keyframes hintSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.hint-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  opacity: 0.75;
+}
+
+.hint-text {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  line-height: 1.6;
+  min-height: 1.6em;
+  word-break: break-all;
+}
+
+/* ── Individual hint characters ── */
+
+.hint-char {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 0.18s ease, transform 0.18s ease, text-shadow 0.3s ease;
+}
+
+.hint-char--visible {
+  opacity: 1;
+  transform: translateY(0);
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.35);
+}
+
+/* Brief glow pulse on newly-revealed characters */
+@keyframes charGlow {
+  0% {
+    text-shadow: 0 0 12px rgba(255, 255, 255, 0.7);
+  }
+  100% {
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.35);
+  }
+}
+
+.hint-display--animating .hint-char--visible {
+  animation: charGlow 0.4s ease-out;
+}
+
+/* ── Mobile responsive ── */
+
 @media (max-width: 768px) {
   .daily-riddle {
     padding: 1.5rem;
@@ -164,5 +311,21 @@
 
   .answer-text {
     font-size: 1.1rem;
+  }
+
+  .hint-controls {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .hint-button {
+    width: 100%;
+    text-align: center;
+  }
+
+  .hint-text {
+    font-size: 1.1rem;
+    letter-spacing: 0.1em;
   }
 }
