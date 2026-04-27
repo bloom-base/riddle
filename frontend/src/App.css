@@ -710,3 +710,260 @@ body {
     gap: 1rem;
   }
 }
+
+/* ===========================
+   WORD LADDER
+   =========================== */
+
+.word-ladder {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.5rem;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.wl-header { text-align: center; margin-bottom: 1.25rem; }
+
+.wl-title {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0 0 0.25rem;
+}
+
+.wl-subtitle {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.wl-subtitle strong {
+  color: var(--accent-light);
+  font-family: 'Courier New', Courier, monospace;
+  letter-spacing: 0.08em;
+}
+
+/* ── chain ── */
+
+.wl-chain {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.wl-step {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--bg-elevated);
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.wl-step--start,
+.wl-step--target {
+  background: var(--accent-dim);
+  border-color: var(--border-accent);
+}
+
+.wl-step--ok {
+  border-color: rgba(16, 185, 129, 0.35);
+  background: rgba(16, 185, 129, 0.08);
+}
+
+.wl-step--error {
+  border-color: rgba(239, 68, 68, 0.4);
+  background: rgba(239, 68, 68, 0.08);
+}
+
+.wl-step--win {
+  border-color: rgba(16, 185, 129, 0.6);
+  background: rgba(16, 185, 129, 0.14);
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.15);
+}
+
+.wl-step-num {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  min-width: 18px;
+  text-align: center;
+}
+
+.wl-step-word {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: var(--text);
+  text-transform: uppercase;
+}
+
+.wl-step-label {
+  font-size: 0.72rem;
+  color: var(--accent-light);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-left: auto;
+}
+
+.wl-step-err {
+  font-size: 0.75rem;
+  color: var(--error);
+  margin-left: auto;
+}
+
+/* ── input area ── */
+
+.wl-input-area {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.wl-input-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.wl-input {
+  flex: 1;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 0.6rem 0.9rem;
+  border-radius: 10px;
+  border: 1px solid var(--border-strong);
+  background: var(--bg-surface);
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.wl-input:focus {
+  border-color: var(--accent);
+  box-shadow: var(--accent-glow);
+}
+
+.wl-input::placeholder {
+  color: var(--text-faint, rgba(255,255,255,0.25));
+  font-family: inherit;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+}
+
+/* ── buttons ── */
+
+.wl-btn {
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.55rem 1rem;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s, opacity 0.15s;
+}
+
+.wl-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.wl-btn--submit {
+  background: var(--accent);
+  color: #fff;
+}
+.wl-btn--submit:hover:not(:disabled) { background: var(--accent-hover); }
+
+.wl-btn--primary {
+  background: var(--accent);
+  color: #fff;
+  padding: 0.65rem 1.5rem;
+  font-size: 0.95rem;
+}
+.wl-btn--primary:hover { background: var(--accent-hover); }
+
+.wl-btn--secondary {
+  background: var(--bg-elevated);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+}
+.wl-btn--secondary:hover:not(:disabled) {
+  background: var(--bg-card);
+  color: var(--text);
+}
+
+.wl-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+/* ── messages ── */
+
+.wl-error {
+  color: var(--error);
+  font-size: 0.85rem;
+  margin: 0;
+  padding: 0.35rem 0.5rem;
+  background: rgba(239, 68, 68, 0.08);
+  border-radius: 6px;
+}
+
+.wl-hint {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin: 0;
+  padding: 0.5rem 0.75rem;
+  background: var(--accent-dim);
+  border-radius: 8px;
+  border: 1px solid var(--border-accent);
+}
+
+.wl-hint--warn { border-color: rgba(245, 158, 11, 0.35); }
+
+.wl-info {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin: 0;
+  text-align: center;
+}
+
+.wl-info strong {
+  color: var(--text);
+}
+
+/* ── win state ── */
+
+.wl-win {
+  text-align: center;
+  padding: 1rem 0 0;
+}
+
+.wl-win-emoji { font-size: 2.5rem; display: block; margin-bottom: 0.5rem; }
+
+.wl-win-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--success);
+  margin: 0 0 0.35rem;
+}
+
+.wl-win-body {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  margin: 0 0 1rem;
+}
+
+.wl-win-body strong {
+  color: var(--text);
+}
+
+.wl-win-optimal {
+  color: var(--warm);
+  font-weight: 600;
+}
