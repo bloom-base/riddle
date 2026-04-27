@@ -7,6 +7,7 @@ import PuzzleTimer from './components/PuzzleTimer';
 import DailyRiddle from './components/DailyRiddle';
 import StreakBadge from './components/StreakBadge';
 import PuzzleArchive from './components/PuzzleArchive';
+import WordLadder from './components/WordLadder';
 import { useStreak } from './hooks/useStreak';
 
 interface Puzzle {
@@ -377,6 +378,7 @@ function App() {
               onExpire={handleTimerExpire}
             />
             {riddle && <DailyRiddle riddle={riddle} />}
+            <WordLadder />
             <QuoteMatchingPuzzle
               puzzle={puzzle}
               onComplete={handlePuzzleComplete}
@@ -431,6 +433,7 @@ function App() {
                 </div>
 
                 {archiveRiddle && <DailyRiddle riddle={archiveRiddle} />}
+                <WordLadder />
                 <QuoteMatchingPuzzle
                   puzzle={archivePuzzle}
                   onComplete={handleArchivePuzzleComplete}
