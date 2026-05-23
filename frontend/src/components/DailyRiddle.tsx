@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import './DailyRiddle.css';
 import DifficultyStars from './DifficultyStars';
+import Confetti from './Confetti';
 
 interface DailyRiddleData {
   date: string;
@@ -235,6 +236,7 @@ const DailyRiddle: React.FC<DailyRiddleProps> = ({ riddle }) => {
         </div>
 
         {/* ── Answer reveal ── */}
+        <Confetti active={isRevealed} />
         {!isRevealed ? (
           <button
             className="reveal-button"

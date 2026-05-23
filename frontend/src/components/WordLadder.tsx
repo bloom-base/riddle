@@ -16,6 +16,7 @@ import {
   type DailyWordLadder,
   type StepResult,
 } from '../services/wordLadderService';
+import Confetti from './Confetti';
 
 /* ────────────────────────── component ─────────────────────────── */
 
@@ -238,6 +239,7 @@ export default function WordLadder() {
       )}
 
       {/* ── win state ── */}
+      <Confetti active={won} />
       {won && (
         <div className="wl-win">
           <span className="wl-win-emoji" aria-hidden="true">🎉</span>
