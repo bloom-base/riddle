@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './QuoteMatchingPuzzle.css';
 import ShareButton from './ShareButton';
 import DifficultyStars from './DifficultyStars';
+import Confetti from './Confetti';
 
 interface Fragment {
   id: string;
@@ -217,6 +218,7 @@ const QuoteMatchingPuzzle: React.FC<QuoteMatchingPuzzleProps> = ({
 
     return (
       <div className="puzzle-container">
+        <Confetti active={true} />
         <div className="completion-screen">
           <div className="celebration">🎉</div>
           <h2>Congratulations!</h2>
