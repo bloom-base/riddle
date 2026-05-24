@@ -8,7 +8,8 @@
   border: 1px solid var(--border-strong);
   border-radius: 10px;
   min-width: 72px;
-  transition: background var(--t), box-shadow var(--t);
+  transition: background var(--t), box-shadow var(--t), transform 0.3s ease;
+  position: relative;
 }
 
 .streak-badge.has-streak {
@@ -22,6 +23,16 @@
   box-shadow: 0 0 12px rgba(16, 185, 129, 0.2);
 }
 
+/* Amber glow for 30+ day milestones */
+.streak-badge.milestone-glow {
+  box-shadow: 0 0 16px rgba(245, 158, 11, 0.35), 0 0 4px rgba(245, 158, 11, 0.2);
+  border-color: rgba(245, 158, 11, 0.6);
+}
+
+.streak-badge.milestone-glow.solved-today {
+  box-shadow: 0 0 16px rgba(245, 158, 11, 0.35), 0 0 12px rgba(16, 185, 129, 0.2);
+}
+
 .streak-main {
   display: flex;
   align-items: center;
@@ -29,8 +40,39 @@
   line-height: 1;
 }
 
+/* ── Fire emoji scaling by tier ── */
 .streak-flame {
   font-size: 1.3rem;
+  transition: font-size 0.3s ease, transform 0.3s ease;
+  display: inline-block;
+}
+
+.streak-flame.flame-none {
+  font-size: 1.1rem;
+}
+
+.streak-flame.flame-base {
+  font-size: 1.3rem;
+}
+
+.streak-flame.flame-warm {
+  font-size: 1.5rem;
+}
+
+.streak-flame.flame-hot {
+  font-size: 1.7rem;
+}
+
+.streak-flame.flame-inferno {
+  font-size: 2rem;
+  animation: flameWiggle 1.5s ease-in-out infinite;
+}
+
+@keyframes flameWiggle {
+  0%, 100% { transform: rotate(0deg) scale(1); }
+  25%      { transform: rotate(-3deg) scale(1.02); }
+  50%      { transform: rotate(2deg) scale(0.98); }
+  75%      { transform: rotate(-1deg) scale(1.01); }
 }
 
 .streak-count {
@@ -62,7 +104,23 @@
   white-space: nowrap;
 }
 
-/* Pulse animation on completion */
+/* ── Milestone message ── */
+.milestone-message {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  animation: milestoneFadeIn 0.5s ease forwards;
+}
+
+@keyframes milestoneFadeIn {
+  0%   { opacity: 0; transform: translateY(4px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Pop animation on first solve (streakPop) ── */
 @keyframes streakPop {
   0%   { transform: scale(1); }
   40%  { transform: scale(1.15); }
@@ -72,6 +130,22 @@
 
 .streak-badge.solved-today {
   animation: streakPop 0.5s ease forwards;
+}
+
+/* ── Pulse animation on daily streak increase ── */
+@keyframes streakPulse {
+  0%   { transform: scale(1); box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.5); }
+  50%  { transform: scale(1.08); box-shadow: 0 0 20px 4px rgba(245, 158, 11, 0.3); }
+  100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); }
+}
+
+.streak-badge.streak-pulse {
+  animation: streakPulse 0.8s ease forwards;
+}
+
+/* When both solved-today and pulse are active, pulse takes precedence */
+.streak-badge.solved-today.streak-pulse {
+  animation: streakPulse 0.8s ease forwards;
 }
 
 @media (max-width: 768px) {
@@ -86,5 +160,36 @@
 
   .streak-flame {
     font-size: 1.1rem;
+  }
+
+  .streak-flame.flame-warm {
+    font-size: 1.3rem;
+  }
+
+  .streak-flame.flame-hot {
+    font-size: 1.4rem;
+  }
+
+  .streak-flame.flame-inferno {
+    font-size: 1.6rem;
+  }
+}
+
+/* ── Accessibility: reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  .streak-badge,
+  .streak-badge.solved-today,
+  .streak-badge.streak-pulse,
+  .streak-badge.solved-today.streak-pulse {
+    animation: none;
+  }
+
+  .streak-flame.flame-inferno {
+    animation: none;
+  }
+
+  .milestone-message {
+    animation: none;
+    opacity: 1;
   }
 }
