@@ -156,6 +156,49 @@ app.get('/api/riddle/:date', cacheMiddleware(86400, riddleCacheKey), (req: Reque
 });
 
 /**
+ * GET /api/puzzles/difficulties
+ * Return difficulty for each date in a range
+ * Query: ?from=YYYY-MM-DD&to=YYYY-MM-DD (max 365 days)
+ */
+app.get('/api/puzzles/difficulties', (req: Request, res: Response) => {
+  try {
+    const fromStr = req.query.from as string;
+    const toStr = req.query.to as string;
+
+    if (!fromStr || !toStr) {
+      return res.status(400).json({ error: 'Both "from" and "to" query parameters are required (YYYY-MM-DD)' });
+    }
+
+    const fromDate = new Date(fromStr + 'T12:00:00');
+    const toDate = new Date(toStr + 'T12:00:00');
+
+    if (isNaN(fromDate.getTime()) || isNaN(toDate.getTime())) {
+      return res.status(400).json({ error: 'Invalid date format. Use YYYY-MM-DD' });
+    }
+
+    // Limit range to 365 days
+    const daysDiff = Math.round((toDate.getTime() - fromDate.getTime()) / (1000 * 60 * 60 * 24));
+    if (daysDiff < 0 || daysDiff > 365) {
+      return res.status(400).json({ error: 'Date range must be 0-365 days' });
+    }
+
+    const difficulties: Record<string, string> = {};
+    const current = new Date(fromDate);
+
+    while (current <= toDate) {
+      const puzzle = generatePuzzle(current);
+      difficulties[puzzle.date] = puzzle.difficulty;
+      current.setDate(current.getDate() + 1);
+    }
+
+    res.json(difficulties);
+  } catch (error) {
+    console.error('Error fetching difficulties:', error);
+    res.status(500).json({ error: 'Failed to fetch difficulties' });
+  }
+});
+
+/**
  * GET /api/health
  * Health check endpoint
  */
