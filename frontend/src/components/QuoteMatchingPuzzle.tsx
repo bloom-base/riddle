@@ -3,6 +3,7 @@ import './QuoteMatchingPuzzle.css';
 import ShareButton from './ShareButton';
 import DifficultyStars from './DifficultyStars';
 import Confetti from './Confetti';
+import { recordPuzzleSolve } from '../utils/statsManager';
 
 interface Fragment {
   id: string;
@@ -47,6 +48,7 @@ const QuoteMatchingPuzzle: React.FC<QuoteMatchingPuzzleProps> = ({
     results?: Record<string, boolean>;
   } | null>(null);
   const [submitted, setSubmitted] = useState(false);
+  const [attemptCount, setAttemptCount] = useState(0);
   const [shownHints, setShownHints] = useState<Set<string>>(new Set());
   const [completionTimeMs, setCompletionTimeMs] = useState<number>(0);
   const [hintUsed, setHintUsed] = useState(false);
@@ -154,12 +156,20 @@ const QuoteMatchingPuzzle: React.FC<QuoteMatchingPuzzleProps> = ({
       }
 
       const result = await response.json();
+      const newAttempts = attemptCount + 1;
+      setAttemptCount(newAttempts);
       setValidationResult({
         isValid: true,
         allCorrect: result.allCorrect,
         results: result.results
       });
       setSubmitted(true);
+
+      // Record stats on success with attempt count and solve time
+      if (result.allCorrect && startTime) {
+        const elapsedMs = Date.now() - startTime;
+        recordPuzzleSolve({ type: 'quotes', attempts: newAttempts, timeMs: elapsedMs > 0 ? elapsedMs : undefined });
+      }
     } catch (error) {
       console.error('Validation error:', error);
       alert('Error validating answers. Please try again.');

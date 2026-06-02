@@ -8,6 +8,7 @@ import DailyRiddle from './components/DailyRiddle';
 import StreakBadge from './components/StreakBadge';
 import PuzzleArchive from './components/PuzzleArchive';
 import WordLadder from './components/WordLadder';
+import StatsPanel from './components/StatsPanel';
 import { useStreak } from './hooks/useStreak';
 
 interface Puzzle {
@@ -59,6 +60,7 @@ function App() {
   });
   const [timeExpired, setTimeExpired] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const [showStats, setShowStats] = useState(false);
   const usernameInputRef = useRef<HTMLInputElement>(null);
 
   const { currentStreak, longestStreak, hasSolvedDate, recordSolve } = useStreak();
@@ -284,6 +286,14 @@ function App() {
         </div>
       )}
 
+      {/* ── Stats Modal ── */}
+      <StatsPanel
+        open={showStats}
+        onClose={() => setShowStats(false)}
+        currentStreak={currentStreak}
+        longestStreak={longestStreak}
+      />
+
       {/* ── Header ── */}
       <header className="site-header">
         <div className="header-inner">
@@ -312,6 +322,14 @@ function App() {
             >
               📚 Archive
             </button>
+            <button
+              className="nav-pill"
+              onClick={() => setShowStats(true)}
+              title="View your stats"
+              aria-label="View your stats"
+            >
+              📊 Stats
+            </button>
           </div>
 
           <div className="header-right">
@@ -331,6 +349,14 @@ function App() {
                 <span className="user-pill-name">{username}</span>
               </button>
             )}
+            <button
+              className="stats-btn-mobile"
+              onClick={() => setShowStats(true)}
+              title="View your stats"
+              aria-label="View your stats"
+            >
+              📊
+            </button>
             <div className="settings-wrapper">
               <button
                 className="settings-btn"
