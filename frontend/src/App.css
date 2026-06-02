@@ -608,6 +608,28 @@ body {
 }
 
 /* ===========================
+   STATS BUTTON (mobile)
+   =========================== */
+.stats-btn-mobile {
+  display: none;  /* hidden on desktop — use nav pill */
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: border-color var(--t), background var(--t);
+}
+
+.stats-btn-mobile:hover {
+  border-color: var(--border-strong);
+  background: var(--bg-elevated);
+}
+
+/* ===========================
    BACK BUTTON
    =========================== */
 .back-button {
@@ -699,6 +721,10 @@ body {
 
   .header-nav {
     display: none;
+  }
+
+  .stats-btn-mobile {
+    display: flex;
   }
 
   .puzzle-hero {

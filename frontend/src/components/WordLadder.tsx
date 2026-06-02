@@ -17,6 +17,7 @@ import {
   type StepResult,
 } from '../services/wordLadderService';
 import Confetti from './Confetti';
+import { recordPuzzleSolve } from '../utils/statsManager';
 
 /* ────────────────────────── component ─────────────────────────── */
 
@@ -85,6 +86,7 @@ export default function WordLadder() {
     if (result.won) {
       setWon(true);
       saveWin(newChain);
+      recordPuzzleSolve({ type: 'wordLadder' });
     }
   }, [currentInput, chain, puzzle, saveWin]);
 

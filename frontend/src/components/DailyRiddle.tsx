@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import './DailyRiddle.css';
 import DifficultyStars from './DifficultyStars';
 import Confetti from './Confetti';
+import { recordPuzzleSolve } from '../utils/statsManager';
 
 interface DailyRiddleData {
   date: string;
@@ -170,6 +171,7 @@ const DailyRiddle: React.FC<DailyRiddleProps> = ({ riddle }) => {
 
   const handleReveal = () => {
     setIsRevealed(true);
+    recordPuzzleSolve({ type: 'riddle' });
   };
 
   const hintButtonLabel =
