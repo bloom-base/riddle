@@ -8,6 +8,8 @@ import DailyRiddle from './components/DailyRiddle';
 import StreakBadge from './components/StreakBadge';
 import PuzzleArchive from './components/PuzzleArchive';
 import WordLadder from './components/WordLadder';
+import StatsPage from './components/StatsPage';
+import { recordPuzzleStat } from './services/statsManager';
 import { useStreak } from './hooks/useStreak';
 
 interface Puzzle {
@@ -48,7 +50,7 @@ function App() {
   const [username, setUsername] = useState<string>('');
   const [showUsernamePrompt, setShowUsernamePrompt] = useState(false);
   const [startTime, setStartTime] = useState<number | null>(null);
-  const [mode, setMode] = useState<'daily' | 'archive'>('daily');
+  const [mode, setMode] = useState<'daily' | 'archive' | 'stats'>('daily');
   const [archiveDate, setArchiveDate] = useState<string | null>(null);
   const [archivePuzzle, setArchivePuzzle] = useState<Puzzle | null>(null);
   const [archiveRiddle, setArchiveRiddle] = useState<DailyRiddleData | null>(null);
@@ -165,6 +167,13 @@ function App() {
     if (!puzzle || !username) return;
 
     recordSolve(puzzle.date);
+    recordPuzzleStat({
+      date: puzzle.date,
+      difficulty: puzzle.difficulty,
+      solveTimeMs: completionTimeMs,
+      accuracy: 100, // quote matching is all-or-nothing on submit
+      puzzleType: 'quote',
+    });
 
     try {
       await fetch('/api/leaderboard/submit', {
@@ -185,6 +194,13 @@ function App() {
     if (!archivePuzzle || !username) return;
 
     recordSolve(archivePuzzle.date);
+    recordPuzzleStat({
+      date: archivePuzzle.date,
+      difficulty: archivePuzzle.difficulty,
+      solveTimeMs: completionTimeMs,
+      accuracy: 100,
+      puzzleType: 'quote',
+    });
 
     try {
       await fetch('/api/leaderboard/submit', {
@@ -312,6 +328,14 @@ function App() {
             >
               📚 Archive
             </button>
+            <button
+              className={`nav-pill ${mode === 'stats' ? 'active' : ''}`}
+              onClick={() => setMode('stats')}
+              title="View your stats"
+              aria-label="View your stats"
+            >
+              📊 Stats
+            </button>
           </div>
 
           <div className="header-right">
@@ -387,7 +411,7 @@ function App() {
             />
             <Leaderboard date={puzzle.date} />
           </>
-        ) : (
+        ) : mode === 'archive' ? (
           <>
             {!archiveDate ? (
               <PuzzleArchive
@@ -457,6 +481,8 @@ function App() {
               </div>
             )}
           </>
+        ) : (
+          <StatsPage onBack={() => setMode('daily')} />
         )}
       </main>
 

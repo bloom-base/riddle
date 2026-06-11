@@ -7,7 +7,7 @@ import './index.css'
 
 // Simple routing based on pathname
 const path = window.location.pathname;
-const knownRoutes = ['/', '/demo', '/obs', '/archive'];
+const knownRoutes = ['/', '/demo', '/obs', '/archive', '/stats'];
 const isDemoPage = path.includes('/demo') || path.includes('/obs');
 const isKnownRoute = knownRoutes.some(route => path === route || path.startsWith(route + '/'));
 

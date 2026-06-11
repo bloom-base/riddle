@@ -1,0 +1,244 @@
+/* ── DifficultyChart ── */
+.diff-chart {
+  background: var(--card-bg, #ffffff);
+  border: 1px solid var(--border, #e2e8f0);
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.diff-chart--empty {
+  text-align: center;
+}
+
+.diff-chart__title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary, #1e293b);
+  margin: 0 0 1rem 0;
+  text-align: center;
+}
+
+.diff-chart__empty-msg {
+  color: var(--text-muted, #94a3b8);
+  font-size: 0.85rem;
+  margin: 1rem 0;
+}
+
+/* ── Bar chart area ── */
+.diff-chart__bars {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-end;
+  min-height: 160px;
+}
+
+.diff-chart__y-axis {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 140px;
+  font-size: 0.65rem;
+  color: var(--text-muted, #94a3b8);
+  padding-right: 0.5rem;
+  flex-shrink: 0;
+  text-align: right;
+  min-width: 36px;
+}
+
+.diff-chart__bar-group {
+  display: flex;
+  flex: 1;
+  gap: 0.75rem;
+  justify-content: center;
+  align-items: flex-end;
+  height: 140px;
+}
+
+.diff-chart__bar-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  max-width: 80px;
+}
+
+.diff-chart__bar-track {
+  width: 100%;
+  height: 140px;
+  background: var(--bar-track, #f1f5f9);
+  border-radius: 6px 6px 0 0;
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+}
+
+.diff-chart__bar-fill {
+  width: 100%;
+  border-radius: 6px 6px 0 0;
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  transition: height 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  min-height: 0;
+}
+
+.diff-chart__bar-value {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  padding-top: 4px;
+  white-space: nowrap;
+}
+
+.diff-chart__bar-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-primary, #1e293b);
+  margin-top: 0.4rem;
+}
+
+.diff-chart__bar-count {
+  font-size: 0.65rem;
+  color: var(--text-muted, #94a3b8);
+}
+
+/* ── Trend section ── */
+.diff-chart__trends {
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border, #e2e8f0);
+}
+
+.diff-chart__trend-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-primary, #1e293b);
+  margin: 0 0 0.75rem 0;
+}
+
+.diff-chart__trend-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.diff-chart__trend-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.diff-chart__trend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.diff-chart__trend-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-secondary, #475569);
+  width: 56px;
+  flex-shrink: 0;
+}
+
+.diff-chart__sparkline {
+  flex: 1;
+  min-width: 0;
+}
+
+.diff-chart__no-data {
+  font-size: 0.75rem;
+  color: var(--text-muted, #94a3b8);
+}
+
+/* ── Legend ── */
+.diff-chart__legend {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border, #e2e8f0);
+}
+
+.diff-chart__legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.75rem;
+  color: var(--text-secondary, #475569);
+}
+
+.diff-chart__legend-swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+/* ── Sparkline ── */
+.sparkline {
+  display: flex;
+  align-items: flex-end;
+  height: 28px;
+  gap: 2px;
+}
+
+.sparkline__col {
+  flex: 1;
+  height: 100%;
+  position: relative;
+  min-width: 6px;
+}
+
+.sparkline__dot {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  transition: bottom 0.3s ease;
+}
+
+/* ── Mobile responsive ── */
+@media (max-width: 480px) {
+  .diff-chart {
+    padding: 1rem;
+  }
+
+  .diff-chart__bars {
+    min-height: 120px;
+  }
+
+  .diff-chart__y-axis {
+    height: 100px;
+    font-size: 0.6rem;
+    min-width: 28px;
+  }
+
+  .diff-chart__bar-group {
+    height: 100px;
+  }
+
+  .diff-chart__bar-track {
+    height: 100px;
+  }
+
+  .diff-chart__bar-value {
+    font-size: 0.6rem;
+  }
+
+  .diff-chart__legend {
+    gap: 0.5rem;
+  }
+
+  .diff-chart__legend-item {
+    font-size: 0.7rem;
+  }
+}
